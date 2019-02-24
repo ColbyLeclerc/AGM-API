@@ -26,7 +26,7 @@ public class PlantSensorModel {
     /**
 
      */
-    public PlantSensorGetResponse getSingleEnclosure(int id) {
+    public PlantSensorGetResponse getSinglePlant(int id) {
 
         PlantSensorGetResponse response = new PlantSensorGetResponse();
         if (tempDb.containsKey(id)){
@@ -39,7 +39,7 @@ public class PlantSensorModel {
     }
 
     //TODO change userId to User object once user management system is built
-    public ArrayList<PlantSensorGetResponse> getAllEnclosures(MetaID metaID) {
+    public ArrayList<PlantSensorGetResponse> getAllPlants(MetaID metaID) {
 
         ArrayList<PlantSensorGetResponse> arrRes = new ArrayList<>();
 
@@ -65,11 +65,11 @@ public class PlantSensorModel {
             PlantSensorCreateResponse resp = new PlantSensorCreateResponse();
 
             resp.setPlantId(i);
-            resp.setPlantSensors(getEncSensors(req.getPlantSensors(), i));
+            resp.setPlantSensors(getPlantSensors(req.getPlantSensors(), i));
 
             arrRes.add(resp);
 
-            ArrayList<PlantSensor> tempArr = new ArrayList<>(getEncSensors(req.getPlantSensors(), i));
+            ArrayList<PlantSensor> tempArr = new ArrayList<>(getPlantSensors(req.getPlantSensors(), i));
 
             if (tempDb.containsKey(i)) {
                 tempArr.addAll(tempDb.get(i));
@@ -84,7 +84,7 @@ public class PlantSensorModel {
         return arrRes;
     }
 
-    private ArrayList<PlantSensor> getEncSensors(ArrayList<PlantSensor> plantSensors, int encId) {
+    private ArrayList<PlantSensor> getPlantSensors(ArrayList<PlantSensor> plantSensors, int encId) {
 
         ArrayList<PlantSensor> resp = new ArrayList<>();
 
@@ -115,7 +115,7 @@ public class PlantSensorModel {
         }
     }
 
-    public boolean PlantSensorExists(int id) {
+    public boolean plantSensorExists(int id) {
         return tempDb.containsKey(id);
     }
 }

@@ -20,4 +20,13 @@ public class AuthorizationModel {
         return true;
     }
 
+    public boolean userHaveAccessToPlant (MetaID metaId, int enclosureId){
+
+        if (enclosureId < 1){
+            return false;
+        }
+
+        return true;
+    }
+
 }

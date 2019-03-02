@@ -17,7 +17,7 @@ public class EnclosureSensorCreateResponse {
     @JsonProperty("enclosure-id")
     private int enclosureId;
     @JsonProperty("enclosure-sensors")
-    private ArrayList<EnclosureSensor> plantSensors;
+    private ArrayList<EnclosureSensor> enclosureSensors;
 
     public int getEnclosureId() {
         return enclosureId;
@@ -27,11 +27,11 @@ public class EnclosureSensorCreateResponse {
         this.enclosureId = enclosureId;
     }
 
-    public ArrayList<EnclosureSensor> getPlantSensors() {
-        return plantSensors;
+    public ArrayList<EnclosureSensor> getEnclosureSensors() {
+        return enclosureSensors;
     }
 
-    public void setPlantSensors(ArrayList<EnclosureSensor> plantSensors) {
-        this.plantSensors = plantSensors;
+    public void setEnclosureSensors(ArrayList<EnclosureSensor> enclosureSensors) {
+        this.enclosureSensors = enclosureSensors;
     }
 }

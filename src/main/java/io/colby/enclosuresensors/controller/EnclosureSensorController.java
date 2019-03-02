@@ -34,8 +34,9 @@ public class EnclosureSensorController {
             method = RequestMethod.GET)
     @ResponseBody
     @Async("asyncExecutor")
-    public CompletableFuture<List<EnclosureSensorGetResponse>> getAllEnclosureSensors(@RequestHeader(value = "Authorization") String auth,
-                                                                                      HttpServletResponse response
+    public CompletableFuture<List<EnclosureSensorGetResponse>> getAllEnclosureSensors(
+            @RequestHeader(value = "Authorization") String auth,
+            HttpServletResponse response
     ) {
 
         ArrayList<EnclosureSensorGetResponse> arrResp = new ArrayList<>();
@@ -65,9 +66,10 @@ public class EnclosureSensorController {
             method = RequestMethod.GET)
     @ResponseBody
     @Async("asyncExecutor")
-    public CompletableFuture<List<EnclosureSensorGetResponse>> getSingleEnclosureSensor(@PathVariable("id") int id,
-                                                                                        @RequestHeader(value = "Authorization") String auth,
-                                                                                        HttpServletResponse response
+    public CompletableFuture<List<EnclosureSensorGetResponse>> getSingleEnclosureSensor(
+            @PathVariable("id") int id,
+            @RequestHeader(value = "Authorization") String auth,
+            HttpServletResponse response
     ) {
 
         ArrayList<EnclosureSensorGetResponse> arrResp = new ArrayList<>();
@@ -101,13 +103,11 @@ public class EnclosureSensorController {
             produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Async("asyncExecutor")
-    public CompletableFuture<List<EnclosureSensorCreateResponse>> createEnclosureSensor(
-            @Valid @RequestBody ArrayList<EnclosureSensorCreateRequest> request,
+    public CompletableFuture<EnclosureSensorCreateResponse> createEnclosureSensor(
+            @Valid @RequestBody EnclosureSensorCreateRequest request,
             @RequestHeader(value = "Authorization") String auth,
             HttpServletResponse response
     ) {
-
-        ArrayList<EnclosureSensorCreateResponse> arrResp = new ArrayList<>();
 
         @NotBlank(message = "Authorization header cannot be blank")
         String tokenParam = auth;
@@ -117,15 +117,12 @@ public class EnclosureSensorController {
 
         if (!metaId.doesExist()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return CompletableFuture.completedFuture(arrResp);
+            return CompletableFuture.completedFuture(null);
         }
 
         System.out.println(request);
 
-        arrResp.addAll(new EnclosureSensorModel().createEnclosureSensors(metaId, request));
-
-
-        return CompletableFuture.completedFuture(arrResp);
+        return CompletableFuture.completedFuture(new EnclosureSensorModel().createEnclosureSensors(metaId, request));
 
     }
 

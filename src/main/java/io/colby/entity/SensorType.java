@@ -11,21 +11,21 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public enum SensorType {
-//    @JsonProperty("temperature-humidity")
+    @JsonProperty("temperature-humidity")
     TEMPERATURE_HUMIDITY {
         @Override
         public String toString() {
             return "TEMPERATURE_HUMIDITY";
         }
     },
-//    @JsonProperty("soil-moisture")
+    @JsonProperty("soil-moisture")
     SOIL_MOISTURE {
         @Override
         public String toString() {
             return "SOIL_MOISTURE";
         }
     },
-//    @JsonProperty("soil-temperature")
+    @JsonProperty("soil-temperature")
     SOIL_TEMPERATURE {
         @Override
         public String toString() {

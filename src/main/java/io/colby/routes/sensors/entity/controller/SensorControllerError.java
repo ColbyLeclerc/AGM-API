@@ -1,4 +1,4 @@
-package io.colby.sensors.entity.controller;
+package io.colby.routes.sensors.entity.controller;
 
 /*
  * Copyright (c) 2019. CJ Software Company All rights reserved.

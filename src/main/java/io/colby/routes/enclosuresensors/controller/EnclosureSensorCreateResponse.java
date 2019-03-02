@@ -1,4 +1,4 @@
-package io.colby.enclosuresensors.controller;
+package io.colby.routes.enclosuresensors.controller;
 
 /*
  * Copyright (c) 2019. CJ Software Company All rights reserved.
@@ -12,7 +12,7 @@ import io.colby.entity.EnclosureSensor;
 
 import java.util.ArrayList;
 
-public class EnclosureSensorCreateRequest {
+public class EnclosureSensorCreateResponse {
 
     @JsonProperty("enclosure-id")
     private int enclosureId;

@@ -1,4 +1,4 @@
-package io.colby.plantsensors.controller;
+package io.colby.routes.plantsensors.controller;
 
 /*
  * Copyright (c) 2019. CJ Software Company All rights reserved.

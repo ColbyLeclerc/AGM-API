@@ -1,7 +1,6 @@
-package io.colby.plantsensors.controller;
+package io.colby.routes.plantsensors.controller;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.colby.entity.EnclosureSensor;
 import io.colby.entity.PlantSensor;
 
 import java.util.ArrayList;
@@ -13,7 +12,7 @@ import java.util.ArrayList;
  * Written by Colby Leclerc <colby@colby.io>, January 1, 2018
  */
 
-public class PlantSensorCreateResponse {
+public class PlantSensorCreateRequest {
 
     @JsonProperty("plant-id")
     private int plantId;

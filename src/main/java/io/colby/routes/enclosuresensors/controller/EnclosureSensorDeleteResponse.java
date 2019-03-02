@@ -1,4 +1,4 @@
-package io.colby.enclosuresensors.controller;
+package io.colby.routes.enclosuresensors.controller;
 
 /*
  * Written by Colby Leclerc <colby@colby.io>, January 1, 2018

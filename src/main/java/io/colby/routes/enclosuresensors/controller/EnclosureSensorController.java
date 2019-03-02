@@ -1,4 +1,4 @@
-package io.colby.enclosuresensors.controller;
+package io.colby.routes.enclosuresensors.controller;
 
 /*
  * Copyright (c) 2019. CJ Software Company All rights reserved.
@@ -7,7 +7,7 @@ package io.colby.enclosuresensors.controller;
  * Written by Colby Leclerc <colby@colby.io>, January 1, 2018
  */
 
-import io.colby.enclosuresensors.model.EnclosureSensorModel;
+import io.colby.routes.enclosuresensors.model.EnclosureSensorModel;
 import io.colby.entity.MetaID;
 import io.colby.entity.Token;
 import io.colby.model.AuthenticationModel;
@@ -19,7 +19,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 

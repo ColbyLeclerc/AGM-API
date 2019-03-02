@@ -1,4 +1,4 @@
-package io.colby.plantsensors.controller;
+package io.colby.routes.plantsensors.controller;
 
 /*
  * Copyright (c) 2019. CJ Software Company All rights reserved.
@@ -11,7 +11,7 @@ import io.colby.entity.MetaID;
 import io.colby.entity.Token;
 import io.colby.model.AuthenticationModel;
 import io.colby.model.AuthorizationModel;
-import io.colby.plantsensors.model.PlantSensorModel;
+import io.colby.routes.plantsensors.model.PlantSensorModel;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 

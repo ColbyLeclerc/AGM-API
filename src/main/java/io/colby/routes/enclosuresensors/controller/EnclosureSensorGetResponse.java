@@ -1,4 +1,4 @@
-package io.colby.enclosuresensors.controller;
+package io.colby.routes.enclosuresensors.controller;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.colby.entity.EnclosureSensor;

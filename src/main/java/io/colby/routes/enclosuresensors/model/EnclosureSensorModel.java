@@ -1,12 +1,11 @@
-package io.colby.enclosuresensors.model;
+package io.colby.routes.enclosuresensors.model;
 
-import io.colby.enclosuresensors.controller.EnclosureSensorCreateResponse;
-import io.colby.enclosuresensors.controller.EnclosureSensorDeleteResponse;
-import io.colby.enclosuresensors.controller.EnclosureSensorGetResponse;
-import io.colby.enclosuresensors.controller.EnclosureSensorCreateRequest;
+import io.colby.routes.enclosuresensors.controller.EnclosureSensorCreateResponse;
+import io.colby.routes.enclosuresensors.controller.EnclosureSensorDeleteResponse;
+import io.colby.routes.enclosuresensors.controller.EnclosureSensorGetResponse;
+import io.colby.routes.enclosuresensors.controller.EnclosureSensorCreateRequest;
 import io.colby.entity.EnclosureSensor;
 import io.colby.entity.MetaID;
-import io.colby.entity.SensorType;
 
 import java.util.ArrayList;
 import java.util.Date;

@@ -1,11 +1,11 @@
-package io.colby.plantsensors.model;
+package io.colby.routes.plantsensors.model;
 
 import io.colby.entity.PlantSensor;
 import io.colby.entity.MetaID;
-import io.colby.plantsensors.controller.PlantSensorCreateRequest;
-import io.colby.plantsensors.controller.PlantSensorCreateResponse;
-import io.colby.plantsensors.controller.PlantSensorDeleteResponse;
-import io.colby.plantsensors.controller.PlantSensorGetResponse;
+import io.colby.routes.plantsensors.controller.PlantSensorCreateRequest;
+import io.colby.routes.plantsensors.controller.PlantSensorCreateResponse;
+import io.colby.routes.plantsensors.controller.PlantSensorDeleteResponse;
+import io.colby.routes.plantsensors.controller.PlantSensorGetResponse;
 
 import java.util.ArrayList;
 import java.util.Date;

@@ -1,7 +1,6 @@
-package io.colby.plantsensors.controller;
+package io.colby.routes.plantsensors.controller;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.colby.entity.EnclosureSensor;
 import io.colby.entity.PlantSensor;
 
 import java.util.List;

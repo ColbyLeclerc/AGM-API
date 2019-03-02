@@ -6,10 +6,10 @@ import io.colby.enclosuresensors.controller.EnclosureSensorGetResponse;
 import io.colby.enclosuresensors.controller.EnclosureSensorCreateRequest;
 import io.colby.entity.EnclosureSensor;
 import io.colby.entity.MetaID;
+import io.colby.entity.SensorType;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 /*
@@ -34,17 +34,17 @@ public class EnclosureSensorModel {
 //        sensorEnc.setDateCreated(new Date());
 //        sensorEnc.setLocation("In plant 1");
 //        sensorEnc.setType(SensorType.TEMPERATURE_HUMIDITY);
-//        sensorEnc.setSensorId(1);
+//        sensorEnc.setEnclosureId(1);
 //
 //        EnclosureSensor sensorEnc2 = new EnclosureSensor();
 //        sensorEnc2.setDateCreated(new Date());
 //        sensorEnc2.setLocation("Above plant 2");
 //        sensorEnc2.setType(SensorType.TEMPERATURE_HUMIDITY);
-//        sensorEnc2.setSensorId(2);
+//        sensorEnc2.setEnclosureId(2);
 //
 //        PlantSensor sensorPlnt = new PlantSensor();
 //        sensorPlnt.setDateCreated(new Date());
-//        sensorPlnt.setSensorId(3);
+//        sensorPlnt.setEnclosureId(3);
 //        sensorPlnt.setType(SensorType.TEMPERATURE_HUMIDITY);
 
 //        ArrayList<PlantSensor> pltSnsr = new ArrayList<>();
@@ -56,7 +56,7 @@ public class EnclosureSensorModel {
 //        encSnsr.add(sensorEnc);
 //        encSnsr.add(sensorEnc2);
         EnclosureSensorGetResponse response = new EnclosureSensorGetResponse();
-        if (tempDb.containsKey(id)){
+        if (tempDb.containsKey(id)) {
 //        response.setPlant_sensors(pltSnsr);
             response.setEnclosureSensors(tempDb.get(id));
             response.setEnclosureId(id);
@@ -76,17 +76,17 @@ public class EnclosureSensorModel {
 //        sensorEnc.setDateCreated(new Date());
 //        sensorEnc.setLocation("In plant 1");
 //        sensorEnc.setType(SensorType.TEMPERATURE_HUMIDITY);
-//        sensorEnc.setSensorId(1);
+//        sensorEnc.setEnclosureId(1);
 //
 //        EnclosureSensor sensorEnc2 = new EnclosureSensor();
 //        sensorEnc2.setDateCreated(new Date());
 //        sensorEnc2.setLocation("Above plant 2");
 //        sensorEnc2.setType(SensorType.TEMPERATURE_HUMIDITY);
-//        sensorEnc2.setSensorId(2);
+//        sensorEnc2.setEnclosureId(2);
 
 //        PlantSensor sensorPlnt = new PlantSensor();
 //        sensorPlnt.setDateCreated(new Date());
-//        sensorPlnt.setSensorId(3);
+//        sensorPlnt.setEnclosureId(3);
 //        sensorPlnt.setType(SensorType.TEMPERATURE_HUMIDITY);
 
 //        ArrayList<PlantSensor> pltSnsr = new ArrayList<>();
@@ -104,34 +104,27 @@ public class EnclosureSensorModel {
     }
 
 
-    public ArrayList<EnclosureSensorCreateResponse> createEnclosureSensors(MetaID metaId,
-                                                                           List<EnclosureSensorCreateRequest> enclosure) {
-
-        ArrayList<EnclosureSensorCreateResponse> arrRes = new ArrayList<>();
-
+    public EnclosureSensorCreateResponse createEnclosureSensors(MetaID metaId,
+                                                                EnclosureSensorCreateRequest enclosure) {
         int i = tempDb.keySet().size() + 1;
 
-        for (EnclosureSensorCreateRequest req : enclosure) {
-            EnclosureSensorCreateResponse resp = new EnclosureSensorCreateResponse();
+        EnclosureSensorCreateResponse resp = new EnclosureSensorCreateResponse();
 
-            resp.setEnclosureId(i);
-            resp.setPlantSensors(getEncSensors(req.getPlantSensors(), i));
+        resp.setEnclosureId(i);
+        resp.setEnclosureSensors(getEncSensors(enclosure.getEnclosureSensors(), i));
 
-            arrRes.add(resp);
+        ArrayList<EnclosureSensor> tempArr = new ArrayList<>(getEncSensors(enclosure.getEnclosureSensors(), i));
 
-            ArrayList<EnclosureSensor> tempArr = new ArrayList<>(getEncSensors(req.getPlantSensors(), i));
-
-            if (tempDb.containsKey(i)) {
-                tempArr.addAll(tempDb.get(i));
-            }
-
-            tempDb.put(i, tempArr);
-
-            i++;
-
+        if (tempDb.containsKey(i)) {
+            tempArr.addAll(tempDb.get(i));
         }
 
-        return arrRes;
+        tempDb.put(i, tempArr);
+
+        i++;
+
+
+        return resp;
     }
 
     private ArrayList<EnclosureSensor> getEncSensors(ArrayList<EnclosureSensor> plantSensors, int encId) {
@@ -158,7 +151,8 @@ public class EnclosureSensorModel {
     }
 
     public EnclosureSensorDeleteResponse deleteEnclosureSensor(int id) {
-        if (tempDb.containsKey(id)){
+
+        if (tempDb.containsKey(id)) {
             tempDb.remove(id);
             return new EnclosureSensorDeleteResponse(id, true);
         } else {

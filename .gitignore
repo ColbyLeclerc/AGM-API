@@ -38,3 +38,7 @@ transaction-logs
 secrets.yml
 .gradletasknamecache
 .sts4-cache
+ca-certificate.crt
+.crt
+application.properties
+resources/application.properties

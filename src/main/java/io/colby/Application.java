@@ -10,14 +10,35 @@ package io.colby;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.stereotype.Component;
 
 @SpringBootApplication
+@Component(value = "io.colby")
+//@EnableJpaRepositories(basePackages="io.colby", entityManagerFactoryRef="emf")
 public class Application {
 
     private static final boolean DEV_MODE = true;
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
+
+//        sessionFactory = HibernateAnnotationUtil.getSessionFactory();
+//        session = sessionFactory.getCurrentSession();
+//        System.out.println("Session created");
+//
+//        tx = session.beginTransaction();
+//
+//        session.save(cart);
+//        session.save(item1);
+//        session.save(item2);
+//
+//        tx.commit();
+//        System.out.println("Cart ID=" + cart.getId());
+//        System.out.println("item1 ID=" + item1.getId()
+//                + ", Foreign Key Cart ID=" + item.getCart().getId());
+//        System.out.println("item2 ID=" + item2.getId()
+//                + ", Foreign Key Cart ID=" + item.getCart().getId());
+
     }
 
     public static boolean isDevMode(){

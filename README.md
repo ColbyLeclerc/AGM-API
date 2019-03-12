@@ -6,3 +6,7 @@ Throughout the code base there will be commented out sections of code, implement
 
 ## Why am I releasing the source code?
 Most of my software engineering work is found in proprietary code bases at my current job, thus before this project I didn't have much to show in the form of source code I've developed. My previous projects on my repo were either school projects, or side projects from when I was in high school (or earlier)
+
+
+## Entity Relationship Diagram
+![ER Diagram](https://github.com/ColbyLeclerc/AGM-API/blob/master/AGM_ERD.png)

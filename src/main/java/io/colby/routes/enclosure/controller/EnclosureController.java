@@ -1,4 +1,4 @@
-package io.colby.routes.enclosuresensors.controller;
+package io.colby.routes.enclosure.controller;
 
 /*
  * Copyright (c) 2019. CJ Software Company All rights reserved.
@@ -7,19 +7,23 @@ package io.colby.routes.enclosuresensors.controller;
  * Written by Colby Leclerc <colby@colby.io>, January 1, 2018
  */
 
-import io.colby.routes.enclosuresensors.model.EnclosureSensorModel;
 import io.colby.entity.MetaID;
 import io.colby.entity.Token;
 import io.colby.model.AuthenticationModel;
 import io.colby.model.AuthorizationModel;
+import io.colby.model.entity.Enclosure;
+import io.colby.model.entity.Plant;
+import io.colby.model.repository.EnclosureRepository;
+import io.colby.model.repository.PlantRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -27,83 +31,20 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 //TODO update documentation to reflect changes in response JSON not being a map, and removing plant sensors from response
 
 @RestController
-public class EnclosureSensorController {
+public class EnclosureController {
 
-    @RequestMapping(value = "/sensor/enclosure",
+    @Autowired
+    EnclosureRepository enclosureRepository;
+
+    @Autowired
+    PlantRepository plantRepository;
+
+    @RequestMapping(value = {"/enclosures/{encId}/plants/"},
             method = RequestMethod.GET)
     @ResponseBody
     @Async("asyncExecutor")
-    public CompletableFuture<List<EnclosureSensorGetResponse>> getAllEnclosureSensors(
-            @RequestHeader(value = "Authorization") String auth,
-            HttpServletResponse response
-    ) {
-
-        ArrayList<EnclosureSensorGetResponse> arrResp = new ArrayList<>();
-
-
-        @NotBlank(message = "Authorization header cannot be blank")
-        String tokenParam = auth;
-
-        Token token = new Token(tokenParam);
-        MetaID metaId = new AuthenticationModel().getFromToken(token);
-
-        if (!metaId.doesExist()) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return CompletableFuture.completedFuture(arrResp);
-        }
-
-        //TODO only get enclosures user has access to
-
-        arrResp.addAll(new EnclosureSensorModel().getAllEnclosures(metaId));
-
-        return CompletableFuture.completedFuture(arrResp);
-
-
-    }
-
-    @RequestMapping(value = {"/sensor/enclosure/{id}"},
-            method = RequestMethod.GET)
-    @ResponseBody
-    @Async("asyncExecutor")
-    public CompletableFuture<List<EnclosureSensorGetResponse>> getSingleEnclosureSensor(
-            @PathVariable("id") int id,
-            @RequestHeader(value = "Authorization") String auth,
-            HttpServletResponse response
-    ) {
-
-        ArrayList<EnclosureSensorGetResponse> arrResp = new ArrayList<>();
-
-        @NotBlank(message = "Authorization header cannot be blank")
-        String tokenParam = auth;
-
-        Token token = new Token(tokenParam);
-        MetaID metaId = new AuthenticationModel().getFromToken(token);
-
-        if (!metaId.doesExist()) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return CompletableFuture.completedFuture(arrResp);
-        }
-
-        if (!new AuthorizationModel().userHaveAccessToEnclosure(metaId, id)) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return CompletableFuture.completedFuture(arrResp);
-        }
-
-        arrResp.add(new EnclosureSensorModel().getSingleEnclosure(id));
-
-
-        return CompletableFuture.completedFuture(arrResp);
-
-    }
-
-    @RequestMapping(value = {"/sensor/enclosure"},
-            method = RequestMethod.POST,
-            consumes = "application/json",
-            produces = APPLICATION_JSON_VALUE)
-    @ResponseBody
-    @Async("asyncExecutor")
-    public CompletableFuture<EnclosureSensorCreateResponse> createEnclosureSensor(
-            @Valid @RequestBody EnclosureSensorCreateRequest request,
+    public CompletableFuture<List<Plant>> getAssociatedPlants(
+            @PathVariable("encId") int enclosureId,
             @RequestHeader(value = "Authorization") String auth,
             HttpServletResponse response
     ) {
@@ -119,18 +60,92 @@ public class EnclosureSensorController {
             return CompletableFuture.completedFuture(null);
         }
 
-        System.out.println(request);
+        //TODO change to repo
+        if (!new AuthorizationModel().userHaveAccessToEnclosure(metaId, enclosureId)) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return CompletableFuture.completedFuture(null);
+        }
 
-        return CompletableFuture.completedFuture(new EnclosureSensorModel().createEnclosureSensors(metaId, request));
+//also check for plant access (also, when creating plant-enclosure relationship from plant POST, ensure user has access to enclosure)
+//        if (!new AuthorizationModel().userHaveAccessToEnclosure(metaId, enclosureId)) {
+//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//            return CompletableFuture.completedFuture(null);
+//        }
+
+        return CompletableFuture.completedFuture(plantRepository.findAllByEnclosureId(enclosureId));
 
     }
 
-    @RequestMapping(value = {"/sensor/enclosure/{id}"},
+    @RequestMapping(value = {"/enclosures/{id}"},
+            method = RequestMethod.GET)
+    @ResponseBody
+    @Async("asyncExecutor")
+    public CompletableFuture<Enclosure> getSingleEnclosure(
+            @PathVariable("id") int id,
+            @RequestHeader(value = "Authorization") String auth,
+            HttpServletResponse response
+    ) {
+
+        @NotBlank(message = "Authorization header cannot be blank")
+        String tokenParam = auth;
+
+        Token token = new Token(tokenParam);
+        MetaID metaId = new AuthenticationModel().getFromToken(token);
+
+        if (!metaId.doesExist()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return CompletableFuture.completedFuture(null);
+        }
+
+        //TODO change to repo
+        if (!new AuthorizationModel().userHaveAccessToEnclosure(metaId, id)) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return CompletableFuture.completedFuture(null);
+        }
+
+        return CompletableFuture.completedFuture(enclosureRepository.findByEnclosureId(id));
+
+    }
+
+
+    @RequestMapping(value = {"/enclosures"},
+            method = RequestMethod.POST,
+            consumes = "application/json",
+            produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @Async("asyncExecutor")
+    public CompletableFuture<Enclosure> createEnclosure(
+            @Valid @RequestBody Enclosure request,
+            @RequestHeader(value = "Authorization") String auth,
+            HttpServletResponse response
+    ) {
+
+        @NotBlank(message = "Authorization header cannot be blank")
+        String tokenParam = auth;
+
+        Token token = new Token(tokenParam);
+        MetaID metaId = new AuthenticationModel().getFromToken(token);
+
+        if (!metaId.doesExist()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return CompletableFuture.completedFuture(null);
+        }
+
+        int enclosureId = Optional.of(enclosureRepository.save(request)).orElse(new Enclosure(0)).getEnclosureId();
+
+        if (enclosureId > 0)
+            response.setStatus(HttpServletResponse.SC_CREATED);
+
+        return CompletableFuture.completedFuture(enclosureRepository.findByEnclosureId(enclosureId));
+
+    }
+
+    @RequestMapping(value = {"/enclosures/{id}"},
             method = RequestMethod.DELETE,
             produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Async("asyncExecutor")
-    public CompletableFuture<EnclosureSensorDeleteResponse> deleteEnclosureSensor(
+    public CompletableFuture<String> deleteEnclosureSensor(
             @PathVariable("id") int id,
             @RequestHeader(value = "Authorization") String auth,
             HttpServletResponse response
@@ -158,14 +173,15 @@ public class EnclosureSensorController {
             return CompletableFuture.completedFuture(null);
         }
 
-        if (!new EnclosureSensorModel().enclosureSensorExists(id)){
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            return CompletableFuture.completedFuture(new EnclosureSensorDeleteResponse(id, false));
+        enclosureRepository.deleteById(id);
+
+        if (enclosureRepository.findById(id).isPresent()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return CompletableFuture.completedFuture("{\"message\": \"error when attempting to delete enclosure\", \"deleted\": \"false\", \"enclosure-id\": " + id + "}");
         }
 
-        return CompletableFuture.completedFuture(new EnclosureSensorModel().deleteEnclosureSensor(id));
+        return CompletableFuture.completedFuture("{\"message\": \"enclosure deleted successfully\", \"deleted\": \"true\", \"enclosure-id\": " + id + "}");
 
     }
-
 
 }

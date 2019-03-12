@@ -59,17 +59,23 @@ public class Plant {
     @JsonProperty("last-updated-date-time")
     private LocalDateTime updateTimestamp;
 
+    @Column(name = "enclosure_id")
+    private int enclosureId;
 
-    @ManyToOne
-    @JoinColumn(name = "enclosure_id")
-    private Enclosure enclosure;
-
-    public Enclosure getEnclosure() {
-        return enclosure;
+    public Plant(int plantId){
+        this.plantId = plantId;
     }
 
-    public void setEnclosure(Enclosure enclosure) {
-        this.enclosure = enclosure;
+    public Plant() {
+
+    }
+
+    public int getEnclosureId() {
+        return enclosureId;
+    }
+
+    public void setEnclosureId(int enclosureId) {
+        this.enclosureId = enclosureId;
     }
 
     public int getPlantId() {

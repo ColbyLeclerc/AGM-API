@@ -23,7 +23,6 @@ public class Enclosure {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "enclosure_id", nullable = false, updatable = false)
     @JsonProperty("enclosure-id")
-//    @OneToMany(mappedBy = "plant_enclosure")
     private Integer enclosureId;
 
     @Column(name = "title")
@@ -58,12 +57,13 @@ public class Enclosure {
     @Column(length = 5, precision = 2)
     private double height;
 
-    @OneToMany(mappedBy = "enclosure")
+    @OneToMany
+    @JoinColumn(name = "enclosure_id", referencedColumnName = "enclosure_id")
     private List<Plant> plants;
 
-    public Enclosure(@Size(max = 255) String title,
-                     @Size(max = 255) String location,
-                     @Size(max = 25) String dimensionUnits,
+    public Enclosure(String title,
+                     String location,
+                     String dimensionUnits,
                      double length, double width, double height) {
         this.title = title;
         this.location = location;
@@ -71,6 +71,10 @@ public class Enclosure {
         this.length = length;
         this.width = width;
         this.height = height;
+    }
+
+    public Enclosure(int enclosureId){
+        this.enclosureId = enclosureId;
     }
 
     public Enclosure(){
@@ -164,13 +168,6 @@ public class Enclosure {
         this.height = height;
     }
 
-    public List<Plant> getPlants() {
-        return plants;
-    }
-
-    public void setPlants(List<Plant> plants) {
-        this.plants = plants;
-    }
 }
 
 

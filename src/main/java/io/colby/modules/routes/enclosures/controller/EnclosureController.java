@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -33,43 +32,6 @@ public class EnclosureController {
 
     @Autowired
     PlantRepository plantRepository;
-
-    @RequestMapping(value = {"/enclosures/{encId}/plants/"},
-            method = RequestMethod.GET)
-    @ResponseBody
-    @Async("asyncExecutor")
-    public CompletableFuture<List<Plant>> getAssociatedPlants(
-            @PathVariable("encId") int enclosureId,
-            @RequestHeader(value = "Authorization") String auth,
-            HttpServletResponse response
-    ) {
-
-        @NotBlank(message = "Authorization header cannot be blank")
-        String tokenParam = auth;
-
-        Token token = new Token(tokenParam);
-        MetaID metaId = new AuthenticationModel().getFromToken(token);
-
-        if (!metaId.doesExist()) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return CompletableFuture.completedFuture(null);
-        }
-
-        //TODO change to repo
-        if (!new AuthorizationModel().userHaveAccessToEnclosure(metaId, enclosureId)) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return CompletableFuture.completedFuture(null);
-        }
-
-//also check for plant access (also, when creating plant-enclosure relationship from plant POST, ensure user has access to enclosure)
-//        if (!new AuthorizationModel().userHaveAccessToEnclosure(metaId, enclosureId)) {
-//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-//            return CompletableFuture.completedFuture(null);
-//        }
-
-        return CompletableFuture.completedFuture(plantRepository.findAllByEnclosureId(enclosureId));
-
-    }
 
     @RequestMapping(value = {"/enclosures/{id}"},
             method = RequestMethod.GET)
@@ -98,9 +60,48 @@ public class EnclosureController {
             return CompletableFuture.completedFuture(null);
         }
 
-        return CompletableFuture.completedFuture(enclosureRepository.findByEnclosureId(id));
+        Optional<Enclosure> enclosureSearch = enclosureRepository.findByEnclosureId(id);
+
+        if (!enclosureSearch.isPresent()) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return CompletableFuture.completedFuture(null);
+        }
+
+        return CompletableFuture.completedFuture(enclosureSearch.get());
 
     }
+
+//    @RequestMapping(value = {"/enclosures"},
+//            method = RequestMethod.GET)
+//    @ResponseBody
+//    @Async("asyncExecutor")
+//    public CompletableFuture<Enclosure> getAllEnclosures(
+//            @RequestHeader(value = "Authorization") String auth,
+//            HttpServletResponse response
+//    ) {
+//
+//        @NotBlank(message = "Authorization header cannot be blank")
+//        String tokenParam = auth;
+//
+//        Token token = new Token(tokenParam);
+//        MetaID metaId = new AuthenticationModel().getFromToken(token);
+//
+//        if (!metaId.doesExist()) {
+//            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+//            return CompletableFuture.completedFuture(null);
+//        }
+//
+//        //TODO findAll associated with metaId once auth module is built
+//        Optional<Enclosure> enclosureSearch = enclosureRepository.findAll();
+//
+//        if (!enclosureSearch.isPresent()){
+//            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+//            return CompletableFuture.completedFuture(null);
+//        }
+//
+//        return CompletableFuture.completedFuture(enclosureSearch.get());
+//
+//    }
 
 
     @RequestMapping(value = {"/enclosures"},
@@ -126,12 +127,17 @@ public class EnclosureController {
             return CompletableFuture.completedFuture(null);
         }
 
-        int enclosureId = Optional.of(enclosureRepository.save(request)).orElse(new Enclosure(0)).getEnclosureId();
+        Enclosure enclosure = enclosureRepository.save(request);
+        Optional<Enclosure> optionalEnclosure = enclosureRepository.findByEnclosureId(enclosure.getEnclosureId());
 
-        if (enclosureId > 0)
-            response.setStatus(HttpServletResponse.SC_CREATED);
+        if (!optionalEnclosure.isPresent()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return CompletableFuture.completedFuture(null);
+        }
 
-        return CompletableFuture.completedFuture(enclosureRepository.findByEnclosureId(enclosureId));
+        response.setStatus(HttpServletResponse.SC_CREATED);
+
+        return CompletableFuture.completedFuture(optionalEnclosure.get());
 
     }
 
@@ -171,7 +177,7 @@ public class EnclosureController {
         enclosureRepository.deleteById(id);
 
         if (enclosureRepository.findById(id).isPresent()) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return CompletableFuture.completedFuture("{\"message\": \"error when attempting to delete enclosure\", \"deleted\": \"false\", \"enclosure-id\": " + id + "}");
         }
 

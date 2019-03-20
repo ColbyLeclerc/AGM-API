@@ -1,9 +1,12 @@
 package io.colby.modules.routes.enclosures.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.colby.modules.routes.plants.model.entity.Plant;
 import io.colby.modules.routes.sensors.model.entity.Sensor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.stereotype.Component;
 
@@ -27,6 +30,10 @@ public class Enclosure {
     @Column(name = "enclosure_id", nullable = false, updatable = false)
     @JsonProperty("enclosure-id")
     private int enclosureId;
+
+    @Column(name = "auth_id")
+    @JsonIgnore
+    private int authId;
 
     @Column(name = "title")
     @Size(max = 255)
@@ -60,13 +67,15 @@ public class Enclosure {
     @Column(length = 5, precision = 2)
     private double height;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "enclosure_id", referencedColumnName = "enclosure_id")
+    @OneToMany()
+    @JoinColumn(name = "enclosure_id", referencedColumnName = "enclosure_id", foreignKey=@ForeignKey(name = "Fk_enclosure_plants"))
+    @LazyCollection(LazyCollectionOption.FALSE)
     private List<Plant> plants = new ArrayList<>();
 
-//    @OneToMany
-//    @JoinColumn(name = "enclosure_id", referencedColumnName = "plant_id")
-//    private List<Sensor> sensors;
+    @OneToMany//was plant_id
+    @JoinColumn(name = "enclosure_id", referencedColumnName = "enclosure_id", foreignKey=@ForeignKey(name = "Fk_enclosure_sensors"))
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private List<Sensor> sensors;
 
     public Enclosure(String title,
                      String location,
@@ -272,13 +281,21 @@ public class Enclosure {
                 '}';
     }
 
-//    public List<Sensor> getSensors() {
-//        return sensors;
-//    }
-//
-//    public void setSensors(List<Sensor> sensors) {
-//        this.sensors = sensors;
-//    }
+    public List<Sensor> getSensors() {
+        return sensors;
+    }
+
+    public void setSensors(List<Sensor> sensors) {
+        this.sensors = sensors;
+    }
+
+    public int getAuthId() {
+        return authId;
+    }
+
+    public void setAuthId(int authId) {
+        this.authId = authId;
+    }
 }
 
 

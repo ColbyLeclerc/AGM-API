@@ -2,8 +2,6 @@ package io.colby.modules.auth.route;
 
 import io.colby.modules.auth.model.entity.Auth;
 import io.colby.modules.auth.model.repository.AuthRepository;
-import io.colby.modules.auth.service.AuthService;
-import io.colby.modules.routes.enclosures.model.entity.Enclosure;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;

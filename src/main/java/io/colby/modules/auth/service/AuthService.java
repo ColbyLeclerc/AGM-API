@@ -4,6 +4,7 @@ import io.colby.modules.auth.model.entity.Auth;
 import io.colby.modules.auth.model.repository.AuthRepository;
 import io.colby.modules.routes.enclosures.model.entity.Enclosure;
 import io.colby.modules.routes.enclosures.repository.EnclosureRepository;
+import io.colby.modules.routes.plants.model.entity.Plant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,19 +27,21 @@ public class AuthService implements AuthServiceI{
     }
 
     @Override
-    public boolean userHaveAccessToEnclosure(Auth auth, int enclosureId) {
+    public boolean userHasAccessToEnclosure(Auth auth, int enclosureId) {
 
-        Optional<Enclosure> encOpt = enclosureRepository.findByEnclosureId(enclosureId);
+        Optional<Enclosure> enclosure = auth.getEnclosures().stream()
+                .filter(x -> x.getEnclosureId() == enclosureId).findFirst();
 
-        if (!encOpt.isPresent())
-            return false;
-//
-//        for (Enclosure enc : auth.getEnclosures()){
-//            if (enc.getEnclosureId() == enclosureId)
-//                return true;
-//        }
+        return enclosure.isPresent();
+    }
 
-        return false;
+    @Override
+    public boolean userHasAccessToPlant(Auth auth, int plantId) {
+
+        Optional<Plant> plant = auth.getPlants().stream()
+                .filter(x -> x.getPlantId() == plantId).findFirst();
+
+        return plant.isPresent();
     }
 
 }

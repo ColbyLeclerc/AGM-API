@@ -24,7 +24,6 @@ import java.util.List;
 @Table(name="enclosure")
 public class Enclosure {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "enclosure_id", nullable = false, updatable = false)

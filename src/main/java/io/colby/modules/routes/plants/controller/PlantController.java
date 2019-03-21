@@ -1,11 +1,8 @@
 package io.colby.modules.routes.plants.controller;
 
 
-import io.colby.modules.auth.MetaID;
-import io.colby.modules.auth.Token;
-import io.colby.modules.auth.model.AuthenticationModel;
-import io.colby.modules.auth.model.AuthorizationModel;
-import io.colby.modules.routes.enclosures.model.entity.Enclosure;
+import io.colby.modules.auth.model.entity.Auth;
+import io.colby.modules.auth.service.AuthService;
 import io.colby.modules.routes.plants.model.entity.Plant;
 import io.colby.modules.routes.plants.model.repository.PlantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -31,6 +27,9 @@ public class PlantController {
     @Autowired
     PlantRepository plantRepository;
 
+    @Autowired
+    AuthService authService;
+
     @RequestMapping(value = {"/plants/{id}"},
             method = RequestMethod.GET)
     @ResponseBody
@@ -41,16 +40,15 @@ public class PlantController {
             HttpServletResponse response
     ) {
 
-        Token token = new Token(auth);
-        MetaID metaId = new AuthenticationModel().getFromToken(token);
+        Optional<Auth> authRec = authService.getFromToken(auth);
 
-        if (!metaId.doesExist()) {
+        if (!authRec.isPresent()){
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return CompletableFuture.completedFuture(null);
         }
 
 //        TODO change to repo
-        if (!new AuthorizationModel().userHaveAccessToEnclosure(metaId, id)) {
+        if (authService.userHasAccessToPlant(authRec.get(), id)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return CompletableFuture.completedFuture(null);
         }
@@ -66,33 +64,26 @@ public class PlantController {
 
     }
 
-    //TODO add back in once auth completed
-//    @RequestMapping(value = {"/plants"},
-//            method = RequestMethod.GET)
-//    @ResponseBody
-//    @Async("asyncExecutor")
-//    public CompletableFuture<List<Plant>> getAllPlants(
-//            @RequestHeader(value = "Authorization") String auth,
-//            HttpServletResponse response
-//    ) {
-//
-//        @NotBlank(message = "Authorization header cannot be blank")
-//        String tokenParam = auth;
-//
-//        Token token = new Token(tokenParam);
-//        MetaID metaId = new AuthenticationModel().getFromToken(token);
-//
-//        if (!metaId.doesExist()) {
-//            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-//            return CompletableFuture.completedFuture(null);
-//        }
-//
-////        TODO in auth or meta repo, get list of all enclosures associated with token/meta id. Then iterate and find
-//
-//
-//        return CompletableFuture.completedFuture(plantRepository.findAll());
-//
-//    }
+//    TODO add back in once auth completed
+    @RequestMapping(value = {"/plants"},
+            method = RequestMethod.GET)
+    @ResponseBody
+    @Async("asyncExecutor")
+    public CompletableFuture<List<Plant>> getAllPlants(
+            @RequestHeader(value = "Authorization") String auth,
+            HttpServletResponse response
+    ) {
+
+        Optional<Auth> authRec = authService.getFromToken(auth);
+
+        if (!authRec.isPresent()){
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return CompletableFuture.completedFuture(null);
+        }
+
+        return CompletableFuture.completedFuture(authRec.get().getPlants());
+
+    }
 
 
     @RequestMapping(value = {"/plants"},
@@ -107,13 +98,9 @@ public class PlantController {
             HttpServletResponse response
     ) {
 
-        @NotBlank(message = "Authorization header cannot be blank")
-        String tokenParam = auth;
+        Optional<Auth> authRec = authService.getFromToken(auth);
 
-        Token token = new Token(tokenParam);
-        MetaID metaId = new AuthenticationModel().getFromToken(token);
-
-        if (!metaId.doesExist()) {
+        if (!authRec.isPresent()){
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return CompletableFuture.completedFuture(null);
         }
@@ -141,24 +128,14 @@ public class PlantController {
             HttpServletResponse response
     ) {
 
+        Optional<Auth> authRec = authService.getFromToken(auth);
 
-        @NotBlank(message = "Authorization header cannot be blank")
-        String tokenParam = auth;
-
-        if (auth.isEmpty()) {
+        if (!authRec.isPresent()){
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return CompletableFuture.completedFuture(null);
         }
 
-        Token token = new Token(tokenParam);
-        MetaID metaId = new AuthenticationModel().getFromToken(token);
-
-        if (!metaId.doesExist()) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return CompletableFuture.completedFuture(null);
-        }
-
-        if (!new AuthorizationModel().userHaveAccessToEnclosure(metaId, id)) {
+        if (authService.userHasAccessToPlant(authRec.get(), id)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return CompletableFuture.completedFuture(null);
         }

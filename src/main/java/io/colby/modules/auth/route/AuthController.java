@@ -62,7 +62,7 @@ public class AuthController {
             method = RequestMethod.GET)
     @ResponseBody
     @Async("asyncExecutor")
-    public CompletableFuture<Auth> getSingleEnclosure(
+    public CompletableFuture<Auth> getSingleAuth(
             @PathVariable("id") int id,
             @RequestHeader(value = "Authorization") String auth,
             HttpServletResponse response

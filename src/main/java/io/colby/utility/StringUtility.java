@@ -12,4 +12,9 @@ public class StringUtility {
     public static final String ANSI_CYAN = "\u001B[36m";
     public static final String ANSI_WHITE = "\u001B[37m";
 
+
+    public static String applyCyan(String msg){
+        return ANSI_CYAN + msg + ANSI_RESET;
+    }
+
 }

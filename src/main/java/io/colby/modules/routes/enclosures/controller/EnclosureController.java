@@ -50,8 +50,8 @@ public class EnclosureController {
             return CompletableFuture.completedFuture(null);
         }
 
-        if (authService.userHasAccessToEnclosure(authRec.get(), id)) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        if (!authService.userHasAccessToEnclosure(authRec.get(), id)) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return CompletableFuture.completedFuture(null);
         }
 
@@ -143,14 +143,14 @@ public class EnclosureController {
         }
 
         if (!authService.userHasAccessToEnclosure(authRec.get(), id)) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return CompletableFuture.completedFuture(null);
         }
 
         enclosureRepository.deleteById(id);
 
         if (enclosureRepository.findById(id).isPresent()) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return CompletableFuture.completedFuture("{\"message\": \"error when attempting to delete enclosure\", \"deleted\": \"false\", \"enclosure-id\": " + id + "}");
         }
 

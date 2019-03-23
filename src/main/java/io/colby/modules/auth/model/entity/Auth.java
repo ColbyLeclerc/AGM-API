@@ -16,6 +16,7 @@ import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 //TODO add email/name
 @Component
@@ -28,7 +29,7 @@ public class Auth {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int authId;
 
-    @Column(name = "token")
+    @Column(name = "token", nullable = false, unique = true)
     private String token;
 
     @Size(max = 75)
@@ -87,12 +88,12 @@ public class Auth {
         this.authId = authId;
     }
 
-    public String getToken() {
-        return token;
+    public UUID getToken() {
+        return UUID.fromString(token);
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setToken(UUID token) {
+        this.token = token.toString();
     }
 
     public LocalDateTime getInsertTimestamp() {
@@ -173,5 +174,23 @@ public class Auth {
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
+    }
+
+    @Override
+    public String toString() {
+        return "Auth{" +
+                "authId=" + authId +
+                ", token='" + token + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", emailAddr='" + emailAddr + '\'' +
+                ", passwordHashLength='" + (passwordHash == null ? 0 : passwordHash.length()) + '\'' +
+                ", saltLength='" + (salt == null ? 0 : salt.length()) + '\'' +
+                ", insertTimestamp=" + insertTimestamp +
+                ", updateTimestamp=" + updateTimestamp +
+                ", plants=" + plants +
+                ", enclosures=" + enclosures +
+                ", sensors=" + sensors +
+                '}';
     }
 }

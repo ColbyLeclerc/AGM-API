@@ -1,8 +1,10 @@
 package routes.enclosure;
 
 import io.colby.Application;
+import io.colby.modules.auth.model.entity.Auth;
 import io.colby.modules.routes.enclosures.model.entity.Enclosure;
 import io.colby.modules.routes.plants.model.entity.Plant;
+import io.colby.utility.StringUtility;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -29,15 +32,18 @@ public class EnclosureControllerTest {
 
     private boolean setupRan = false;
 
-    private static String ENCLOSURE_ENDPOINT = "/enclosures";
+    private static final String AUTH_ENDPOINT = "/auth";
+    private static final String ENCLOSURE_ENDPOINT = "/enclosures";
+
+    private static String AUTH_TOKEN = "";
 
     private static int ENCLOSURE_ID = 0;
-    private static String ENCLOSURE_TITLE = "Enclosure Title";
-    private static String ENCLOSURE_LOCATION = "Enclosure Location";
-    private static String DIMENSIONAL_UNITS = "Meters";
-    private static double ENCLOSURE_LENGTH = 1;
-    private static double ENCLOSURE_WIDTH = 1.0;
-    private static double ENCLOSURE_HEIGHT = 122.2111;
+    private static final String ENCLOSURE_TITLE = "Enclosure Title";
+    private static final String ENCLOSURE_LOCATION = "Enclosure Location";
+    private static final String DIMENSIONAL_UNITS = "Meters";
+    private static final double ENCLOSURE_LENGTH = 1;
+    private static final double ENCLOSURE_WIDTH = 1.0;
+    private static final double ENCLOSURE_HEIGHT = 122.2111;
 
     @LocalServerPort
     private int port;
@@ -52,6 +58,7 @@ public class EnclosureControllerTest {
         return new Enclosure(ENCLOSURE_TITLE, ENCLOSURE_LOCATION,
                 DIMENSIONAL_UNITS, ENCLOSURE_LENGTH, ENCLOSURE_WIDTH, ENCLOSURE_HEIGHT);
     }
+
 
     @Test
     public void contextLoads() {
@@ -68,8 +75,23 @@ public class EnclosureControllerTest {
 
         setupRan = true;
 
+        //TODO create admin auth header then set
+        HttpHeaders headersAuth = new HttpHeaders();
+        headersAuth.add("Authorization", "2E7F4CB19B91EB38D1144F741EAGGF");
+
+        HttpEntity<AuthRequest> entityAuth = new HttpEntity<>(new AuthRequest("test@colby.io"), headersAuth);
+
+        ResponseEntity<Auth> responseAuth = restTemplate.exchange(getRootUrl() + AUTH_ENDPOINT,
+                HttpMethod.POST, entityAuth, Auth.class);
+
+        Assert.assertNotNull(responseAuth.getBody());
+
+        System.out.println(responseAuth.getBody());
+
+        AUTH_TOKEN = responseAuth.getBody().getToken().toString();
+
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "TEST");
+        headers.add("Authorization", AUTH_TOKEN);
 
         HttpEntity<Enclosure> entity = new HttpEntity<>(constructEnclosure(), headers);
 
@@ -101,7 +123,7 @@ public class EnclosureControllerTest {
     public void testGetAllEnclosure() {
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "TEST");
+        headers.add("Authorization", AUTH_TOKEN);
 
         HttpEntity<Enclosure> entity = new HttpEntity<>(constructEnclosure(), headers);
 
@@ -118,20 +140,20 @@ public class EnclosureControllerTest {
         Assert.assertNotNull(responseTwo.getBody());
         Assert.assertNotNull(responseThree.getBody());
 
-        ResponseEntity<EnclosureList> response = restTemplate.exchange(getRootUrl() + ENCLOSURE_ENDPOINT,
-                HttpMethod.GET, entity, EnclosureList.class);
+        ResponseEntity<List<Enclosure>> response = restTemplate.exchange(getRootUrl() + ENCLOSURE_ENDPOINT,
+                HttpMethod.GET, entity, new ParameterizedTypeReference<List<Enclosure>>(){});
 
         System.out.println("response" + response.getBody());
         System.out.println("code " + response.getStatusCodeValue());
 
         Assert.assertNotNull(response.getBody());
 
-        ArrayList<Enclosure> enclosuresList = new ArrayList<>();
-        enclosuresList.addAll(response.getBody().getEnclosures());
+//        ArrayList<Enclosure> enclosuresList = new ArrayList<>();
+//        enclosuresList.addAll(response.getBody().getEnclosures());
 
         Set<Integer> enclosureIds = new HashSet<>();
 
-        enclosuresList.forEach(x -> enclosureIds.add(x.getEnclosureId()));
+        response.getBody().forEach(x -> enclosureIds.add(x.getEnclosureId()));
 
         Assert.assertTrue(enclosureIds.contains(ENCLOSURE_ID));
         Assert.assertTrue(enclosureIds.contains(responseOne.getBody().getEnclosureId()));
@@ -145,18 +167,22 @@ public class EnclosureControllerTest {
     public void testGetEnclosure() {
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "TEST");
+        headers.add("Authorization", AUTH_TOKEN);
+
 
 
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
+
+        System.out.println(StringUtility.ANSI_RED + "Attempting GET on " + ENCLOSURE_ENDPOINT + "/" + ENCLOSURE_ID + " using AUTH_TOKEN " + AUTH_TOKEN + StringUtility.ANSI_RESET);
 
         ResponseEntity<Enclosure> response = restTemplate.exchange(getRootUrl() + ENCLOSURE_ENDPOINT + "/" + ENCLOSURE_ID,
                 HttpMethod.GET, entity, Enclosure.class);
 
         Enclosure enc = response.getBody();
 
-        Assert.assertNotNull(response.getBody());
+        Assert.assertNotNull(enc);
 
+        Assert.assertEquals(200, response.getStatusCodeValue());
         Assert.assertEquals(ENCLOSURE_ID, enc.getEnclosureId());
         Assert.assertEquals(ENCLOSURE_TITLE, enc.getTitle());
         Assert.assertEquals(ENCLOSURE_LOCATION, enc.getLocation());
@@ -171,7 +197,7 @@ public class EnclosureControllerTest {
     public void deleteEnclosure() {
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "TEST");
+        headers.add("Authorization", AUTH_TOKEN);
 //todo create one before and use that id
 
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
@@ -179,11 +205,15 @@ public class EnclosureControllerTest {
         ResponseEntity<Enclosure> responseGetBefore = restTemplate.exchange(getRootUrl() + ENCLOSURE_ENDPOINT + "/" + ENCLOSURE_ID,
                 HttpMethod.GET, entity, Enclosure.class);
 
+        System.out.println(responseGetBefore.toString());
+
         Assert.assertNotNull(responseGetBefore.getBody());
         Assert.assertEquals(200, responseGetBefore.getStatusCodeValue());
         Assert.assertEquals(ENCLOSURE_ID, responseGetBefore.getBody().getEnclosureId());
 
-        ResponseEntity<String> response = restTemplate.exchange(getRootUrl() + "/enclosures/" + ENCLOSURE_ID,
+        System.out.println(StringUtility.ANSI_CYAN + "Attempting to DELETE " + getRootUrl() + ENCLOSURE_ENDPOINT + "/" + ENCLOSURE_ID + StringUtility.ANSI_RESET);
+
+        ResponseEntity<String> response = restTemplate.exchange(getRootUrl() + ENCLOSURE_ENDPOINT + "/" + ENCLOSURE_ID,
                 HttpMethod.DELETE, entity, String.class);
 
         Assert.assertEquals("{\"message\": \"enclosure deleted successfully\", \"deleted\":" +
@@ -197,22 +227,18 @@ public class EnclosureControllerTest {
 
 }
 
-class EnclosureList {
+class AuthRequest {
+    private String email_addr;
 
-    private HashMap<String, Enclosure> enclosures;
-
-    Collection<Enclosure> getEnclosures() {
-        return enclosures.values();
+    AuthRequest(String email){
+        this.email_addr = email;
     }
 
-    public void setEnclosures(HashMap<String, Enclosure> enclosures) {
-        this.enclosures = enclosures;
+    public String getEmailAddr() {
+        return email_addr;
     }
 
-    @Override
-    public String toString() {
-        return "EnclosureList{" +
-                "enclosures=" + enclosures +
-                '}';
+    public void setEmailAddr(String token) {
+        this.email_addr = token;
     }
 }

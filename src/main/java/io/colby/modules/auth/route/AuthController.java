@@ -9,12 +9,15 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 public class AuthController {
+
+    //TODO have token generated from program vs passed as string
 
     @Autowired
     AuthRepository authRepository;
@@ -39,8 +42,10 @@ public class AuthController {
 //            return CompletableFuture.completedFuture(null);
 //        }
 
+        request.setToken(UUID.randomUUID());
+
         Auth authEnt = authRepository.save(request);
-        Optional<Auth> authOpt = authRepository.findAuthByToken(authEnt.getToken());
+        Optional<Auth> authOpt = authRepository.findAuthByToken(authEnt.getToken().toString());
 
         if (!authOpt.isPresent()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);

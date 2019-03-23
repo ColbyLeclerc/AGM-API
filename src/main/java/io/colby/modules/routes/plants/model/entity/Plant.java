@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.colby.modules.routes.sensors.model.entity.Sensor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.stereotype.Component;
 
@@ -71,6 +73,7 @@ public class Plant {
 
     @OneToMany
     @JoinColumn(name = "plant_id", referencedColumnName = "plant_id", foreignKey=@ForeignKey(name = "Fk_plant_sensors"))
+    @LazyCollection(LazyCollectionOption.FALSE)
     private List<Sensor> sensors;
 
     public Plant(int plantId){
@@ -228,5 +231,24 @@ public class Plant {
 
     public void setSensors(List<Sensor> sensors) {
         this.sensors = sensors;
+    }
+
+    @Override
+    public String toString() {
+        return "Plant{" +
+                "\nplantId=" + plantId +
+                ", \nenclosureId=" + enclosureId +
+                ", \nauthId=" + authId +
+                ", \nname='" + name + '\'' +
+                ", \npotSize=" + potSize +
+                ", \npotSizeUnits='" + potSizeUnits + '\'' +
+                ", \nyield=" + yield +
+                ", \nyieldUnits='" + yieldUnits + '\'' +
+                ", \ndateHarvested=" + dateHarvested +
+                ", \ndatePlanted=" + datePlanted +
+                ", \ninsertTimestamp=" + insertTimestamp +
+                ", \nupdateTimestamp=" + updateTimestamp +
+                ", \nsensors=" + sensors +
+                '}';
     }
 }

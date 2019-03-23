@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.colby.modules.routes.plants.model.entity.Plant;
 import io.colby.modules.routes.sensors.model.entity.Sensor;
+import org.assertj.core.util.Strings;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
@@ -13,9 +14,11 @@ import org.springframework.stereotype.Component;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.security.InvalidParameterException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 //TODO for NotBlank fields, setup proper error handling for better messages
 
@@ -88,12 +91,19 @@ public class Enclosure {
         this.height = height;
     }
 
+    Enclosure(){
+
+    }
+
     public Enclosure(int enclosureId){
         this.enclosureId = enclosureId;
     }
 
-    public Enclosure(){
+    public Enclosure(String title){
+        if (Strings.isNullOrEmpty(title))
+            throw new InvalidParameterException("title cannot be null or empty");
 
+        this.title = title;
     }
 
     /**

@@ -17,7 +17,6 @@ import java.util.concurrent.CompletableFuture;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-//TODO change authentication and authorization requests from direct model call to service call
 //TODO update documentation to reflect changes in response JSON not being a map, and removing plant sensors from response
 //TODO change endpoint from /sensor/enclosure to /enclosure
 //TODO add PUT
@@ -47,9 +46,8 @@ public class PlantController {
             return CompletableFuture.completedFuture(null);
         }
 
-//        TODO change to repo
-        if (authService.userHasAccessToPlant(authRec.get(), id)) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        if (!authService.userHasAccessToPlant(authRec.get(), id)) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return CompletableFuture.completedFuture(null);
         }
 
@@ -64,7 +62,6 @@ public class PlantController {
 
     }
 
-//    TODO add back in once auth completed
     @RequestMapping(value = {"/plants"},
             method = RequestMethod.GET)
     @ResponseBody
@@ -105,6 +102,8 @@ public class PlantController {
             return CompletableFuture.completedFuture(null);
         }
 
+        request.setAuthId(authRec.get().getAuthId());
+
         Plant plant = plantRepository.save(request);
         Optional<Plant> plantSearch = plantRepository.findByPlantId(plant.getPlantId());
 
@@ -112,6 +111,8 @@ public class PlantController {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return CompletableFuture.completedFuture(null);
         }
+
+        response.setStatus(HttpServletResponse.SC_CREATED);
 
         return CompletableFuture.completedFuture(plantSearch.get());
 
@@ -135,18 +136,19 @@ public class PlantController {
             return CompletableFuture.completedFuture(null);
         }
 
-        if (authService.userHasAccessToPlant(authRec.get(), id)) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        if (!authService.userHasAccessToPlant(authRec.get(), id)) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return CompletableFuture.completedFuture(null);
         }
 
         plantRepository.deleteById(id);
 
+        //TODO perhaps create innner class to represent error message?
         if (plantRepository.findById(id).isPresent()) {
-            return CompletableFuture.completedFuture("{\"message\": \"error when attempting to delete enclosure\", \"deleted\": \"false\", \"enclosure-id\": " + id + "}");
+            return CompletableFuture.completedFuture("{\"message\": \"error when attempting to delete plant\", \"deleted\": \"false\", \"plant-id\": " + id + "}");
         }
 
-        return CompletableFuture.completedFuture("{\"message\": \"enclosure deleted successfully\", \"deleted\": \"true\", \"enclosure-id\": " + id + "}");
+        return CompletableFuture.completedFuture("{\"message\": \"plant deleted successfully\", \"deleted\": \"true\", \"plant-id\": " + id + "}");
 
     }
 

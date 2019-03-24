@@ -20,6 +20,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.servlet.http.HttpServletResponse;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAmount;
@@ -149,7 +150,7 @@ public class PlantControllerTest {
 
         PLANT_ID = plnt.getPlantId();
 
-        Assert.assertEquals(201, response.getStatusCodeValue());
+        Assert.assertEquals(HttpServletResponse.SC_CREATED, response.getStatusCodeValue());
         Assert.assertEquals(PLANT_NAME, plnt.getName());
         Assert.assertEquals(POT_SIZE, plnt.getPotSize());
         Assert.assertEquals(POT_SIZE_UNITS, plnt.getPotSizeUnits());
@@ -223,7 +224,7 @@ public class PlantControllerTest {
 
         Assert.assertNotNull(plnt);
 
-        Assert.assertEquals(200, response.getStatusCodeValue());
+        Assert.assertEquals(HttpServletResponse.SC_OK, response.getStatusCodeValue());
         Assert.assertEquals(PLANT_NAME, plnt.getName());
         Assert.assertEquals(POT_SIZE, plnt.getPotSize());
         Assert.assertEquals(POT_SIZE_UNITS, plnt.getPotSizeUnits());
@@ -266,7 +267,7 @@ public class PlantControllerTest {
         ResponseEntity<String> responseGetAfter = restTemplate.exchange(getRootUrl() + "/enclosures/" + PLANT_ID,
                 HttpMethod.GET, entity, String.class);
 
-        Assert.assertEquals(404, responseGetAfter.getStatusCode().value());
+        Assert.assertEquals(HttpServletResponse.SC_NOT_FOUND, responseGetAfter.getStatusCode().value());
     }
 
 }

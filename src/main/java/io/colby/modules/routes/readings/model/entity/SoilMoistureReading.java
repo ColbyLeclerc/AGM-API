@@ -1,5 +1,6 @@
 package io.colby.modules.routes.readings.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 @Component
 @Entity
 @Table(name="soil_moisture_reading")
-public class SoilMoistureReading {
+public class SoilMoistureReading implements Reading{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,6 +32,10 @@ public class SoilMoistureReading {
     @Column(name = "moisture_level", length = 5, precision = 2)
     @JsonProperty("moisture-level")
     private double moistureLevel;
+
+    @Column(name = "auth_id")
+    @JsonIgnore
+    private int authId;
 
     @Size(max = 25)
     @Column(name = "moisture_level_units")
@@ -113,5 +118,13 @@ public class SoilMoistureReading {
 
     public void setUpdateTimestamp(LocalDateTime updateTimestamp) {
         this.updateTimestamp = updateTimestamp;
+    }
+
+    public int getAuthId() {
+        return authId;
+    }
+
+    public void setAuthId(int authId) {
+        this.authId = authId;
     }
 }

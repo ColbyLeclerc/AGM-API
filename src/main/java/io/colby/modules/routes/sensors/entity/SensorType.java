@@ -27,35 +27,12 @@ public enum SensorType {
             return "SOIL_TEMPERATURE";
         }
     },
-    //    @JsonProperty("error")
     ERROR {
         @Override
         public String toString() {
             return "ERROR";
         }
     };
-
-//    @JsonCreator
-//    public static SensorType of(String value) {
-//        switch (value.trim().toUpperCase()) {
-//            case "TEMPERATURE_HUMIDITY":
-//                return TEMPERATURE_HUMIDITY;
-//            case "SOIL_MOISTURE":
-//                return SOIL_MOISTURE;
-//            case "SOIL_TEMPERATURE":
-//                return SOIL_TEMPERATURE;
-//            case "TEMPERATURE-HUMIDITY":
-//                return TEMPERATURE_HUMIDITY;
-//            case "SOIL-MOISTURE":
-//                return SOIL_MOISTURE;
-//            case "SOIL-TEMPERATURE":
-//                return SOIL_TEMPERATURE;
-//            default:
-//                return ERROR;
-//        }
-//
-////        throw new UnknownEnumValueException("GenderEnum: unknown value: " + value);
-//    }
 
     @JsonCreator
     public static SensorType fromText(String text) {

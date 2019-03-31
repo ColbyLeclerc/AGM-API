@@ -15,6 +15,4 @@ public interface AuthRepository extends CrudRepository<Auth, Integer> {
 
     Optional<Auth> findAuthByAuthId(int authId);
 
-//    Auth save(Auth auth);
-
 }

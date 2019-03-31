@@ -3,23 +3,23 @@ package io.colby.modules.routes.readings.controller;
 
 import io.colby.modules.auth.model.entity.Auth;
 import io.colby.modules.auth.service.AuthService;
-import io.colby.modules.routes.readings.config.SensorTypeEnumConverter;
-import io.colby.modules.routes.readings.model.entity.Reading;
-import io.colby.modules.routes.readings.model.entity.SoilMoistureReading;
-import io.colby.modules.routes.readings.model.entity.SoilTempReading;
-import io.colby.modules.routes.readings.model.entity.TempHumidReading;
+import io.colby.modules.routes.readings.model.entity.*;
 import io.colby.modules.routes.readings.model.repository.SoilMoistureReadingRepository;
 import io.colby.modules.routes.readings.model.repository.SoilTempReadingRepository;
 import io.colby.modules.routes.readings.model.repository.TempHumidReadingRepository;
 import io.colby.modules.routes.sensors.entity.SensorType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+
+//TODO add filtering
+
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 public class ReadingController {
@@ -56,7 +56,7 @@ public class ReadingController {
             return CompletableFuture.completedFuture(null);
         }
 
-        if (!authService.userHasAccessToReading(authRec.get(), sensor ,id)) {
+        if (!authService.userHasAccessToReading(authRec.get(), sensor, id)) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return CompletableFuture.completedFuture(null);
         }
@@ -88,7 +88,7 @@ public class ReadingController {
                 return CompletableFuture.completedFuture(soilTempSearch.get());
 
             default:
-                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 
         }
 
@@ -97,6 +97,110 @@ public class ReadingController {
 
 
     }
+
+
+    @RequestMapping(value = {"/readings/{sensor}"},
+            method = RequestMethod.POST,
+            consumes = "application/json",
+            produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @Async("asyncExecutor")
+    public CompletableFuture<Reading> createReading(
+            @Valid @RequestBody ReadingRequest request,
+            @PathVariable("sensor") SensorType sensorType,
+            @RequestHeader(value = "Authorization") String auth,
+            HttpServletResponse response
+    ) {
+
+        Optional<Auth> authRec = authService.getFromToken(auth);
+
+        if (!authRec.isPresent()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return CompletableFuture.completedFuture(null);
+        }
+
+        switch (sensorType) {
+            case TEMPERATURE_HUMIDITY:
+
+                TempHumidReading tHReading = new TempHumidReading();
+                tHReading.setAuthId(authRec.get().getAuthId());
+                tHReading.setSensorId(request.getSensorId());
+                tHReading.setHumidity(request.getHumidity());
+                tHReading.setHumidityUnits(request.getHumidityUnits());
+                tHReading.setTempLevel(request.getTempLevel());
+                tHReading.setTempScale(request.getTempScale());
+                tHReading.setTimeRecorded(request.getTimeRecorded());
+
+                TempHumidReading tempHumid = tempHumidRepository.save(tHReading);
+
+                Optional<TempHumidReading> tempHumidSearch = tempHumidRepository.findByTempHumidReadingId(
+                        tempHumid.getTempHumidReadingId());
+
+                if (!tempHumidSearch.isPresent()) {
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    break;
+                }
+
+                response.setStatus(HttpServletResponse.SC_CREATED);
+
+                return CompletableFuture.completedFuture(tempHumidSearch.get());
+
+            case SOIL_MOISTURE:
+
+                SoilMoistureReading sMReading = new SoilMoistureReading();
+                sMReading.setAuthId(authRec.get().getAuthId());
+                sMReading.setSensorId(request.getSensorId());
+                sMReading.setMoistureLevel(request.getMoistureLevel());
+                sMReading.setMoistureLevelUnits(request.getMoistureLevelUnits());
+                sMReading.setTimeRecorded(request.getTimeRecorded());
+
+                SoilMoistureReading soilMois = soilMoistureRepository.save(sMReading);
+
+                Optional<SoilMoistureReading> soilMoisSearch = soilMoistureRepository.findBySoilMoistureReadingId(
+                        soilMois.getSoilMoistureReadingId());
+
+                if (!soilMoisSearch.isPresent()) {
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    break;
+                }
+
+                response.setStatus(HttpServletResponse.SC_CREATED);
+
+                return CompletableFuture.completedFuture(soilMoisSearch.get());
+
+            case SOIL_TEMPERATURE:
+
+                SoilTempReading sTReading = new SoilTempReading();
+                sTReading.setAuthId(authRec.get().getAuthId());
+                sTReading.setSensorId(sTReading.getSensorId());
+                sTReading.setTempLevel(request.getTempLevel());
+                sTReading.setTempScale(request.getTempScale());
+                sTReading.setTimeRecorded(request.getTimeRecorded());
+
+                SoilTempReading soilTemp = soilTempRepository.save(sTReading);
+
+                Optional<SoilTempReading> soilTempSearch = soilTempRepository.findBySoilTempReadingId(
+                        soilTemp.getSoilTempReadingId());
+
+                if (!soilTempSearch.isPresent()) {
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    break;
+                }
+
+                response.setStatus(HttpServletResponse.SC_CREATED);
+
+                return CompletableFuture.completedFuture(soilTempSearch.get());
+
+            default:
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+
+        }
+
+        return CompletableFuture.completedFuture(null);
+
+    }
+
+    //TODO have ability to grab sensor readings using filters
 //
 //    @RequestMapping(value = {"/plants"},
 //            method = RequestMethod.GET)
@@ -118,41 +222,6 @@ public class ReadingController {
 //
 //    }
 //
-//
-//    @RequestMapping(value = {"/plants"},
-//            method = RequestMethod.POST,
-//            consumes = "application/json",
-//            produces = APPLICATION_JSON_VALUE)
-//    @ResponseBody
-//    @Async("asyncExecutor")
-//    public CompletableFuture<Plant> createPlant(
-//            @Valid @RequestBody Plant request,
-//            @RequestHeader(value = "Authorization") String auth,
-//            HttpServletResponse response
-//    ) {
-//
-//        Optional<Auth> authRec = authService.getFromToken(auth);
-//
-//        if (!authRec.isPresent()){
-//            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-//            return CompletableFuture.completedFuture(null);
-//        }
-//
-//        request.setAuthId(authRec.get().getAuthId());
-//
-//        Plant plant = plantRepository.save(request);
-//        Optional<Plant> plantSearch = plantRepository.findByPlantId(plant.getPlantId());
-//
-//        if (!plantSearch.isPresent()){
-//            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-//            return CompletableFuture.completedFuture(null);
-//        }
-//
-//        response.setStatus(HttpServletResponse.SC_CREATED);
-//
-//        return CompletableFuture.completedFuture(plantSearch.get());
-//
-//    }
 //
 //    @RequestMapping(value = {"/plants/{id}"},
 //            method = RequestMethod.DELETE,

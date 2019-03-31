@@ -14,6 +14,8 @@ import java.util.concurrent.CompletableFuture;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+//TODO figure out why during testing multiple auth records are created
+
 @RestController
 public class AuthController {
 

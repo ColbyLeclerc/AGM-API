@@ -25,11 +25,11 @@ public class SoilMoistureReading implements Reading{
     @JsonProperty("sensor-id")
     private int sensorId;
 
-    @Column(name = "soilMoistureSensorId", nullable = false, updatable = false)
-    @JsonProperty("soil-moisture-sensor-id")
-    private int soilMoistureSensorId;
+//    @Column(name = "soilMoistureSensorId", nullable = false, updatable = false)
+//    @JsonProperty("soil-moisture-sensor-id")
+//    private int soilMoistureSensorId;
 
-    @Column(name = "moisture_level", length = 5, precision = 2)
+    @Column(name = "moisture_level", length = 5, precision = 2, nullable = false)
     @JsonProperty("moisture-level")
     private double moistureLevel;
 
@@ -38,7 +38,7 @@ public class SoilMoistureReading implements Reading{
     private int authId;
 
     @Size(max = 25)
-    @Column(name = "moisture_level_units")
+    @Column(name = "moisture_level_units", nullable = false)
     @JsonProperty("moisture-level-units")
     private String moistureLevelUnits;
 
@@ -71,14 +71,14 @@ public class SoilMoistureReading implements Reading{
     public void setSensorId(int sensorId) {
         this.sensorId = sensorId;
     }
-
-    public int getSoilMoistureSensorId() {
-        return soilMoistureSensorId;
-    }
-
-    public void setSoilMoistureSensorId(int soilMoistureSensorId) {
-        this.soilMoistureSensorId = soilMoistureSensorId;
-    }
+//
+//    public int getSoilMoistureSensorId() {
+//        return soilMoistureSensorId;
+//    }
+//
+//    public void setSoilMoistureSensorId(int soilMoistureSensorId) {
+//        this.soilMoistureSensorId = soilMoistureSensorId;
+//    }
 
     public double getMoistureLevel() {
         return moistureLevel;

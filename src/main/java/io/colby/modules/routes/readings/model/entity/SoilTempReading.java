@@ -26,16 +26,16 @@ public class SoilTempReading implements Reading{
     @JsonProperty("sensor-id")
     private int sensorId;
 
-    @Column(name = "temp_level", length = 5, precision = 2)
-    @JsonProperty("temp-level")
-    private double tempLevel;
-
     @Column(name = "auth_id")
     @JsonIgnore
     private int authId;
 
+    @Column(name = "temp_level", length = 5, precision = 2, nullable = false)
+    @JsonProperty("temp-level")
+    private double tempLevel;
+
     @Size(max = 1)
-    @Column(name = "temp_scale")
+    @Column(name = "temp_scale", nullable = false)
     @JsonProperty("temp-scale")
     private String tempScale;
 

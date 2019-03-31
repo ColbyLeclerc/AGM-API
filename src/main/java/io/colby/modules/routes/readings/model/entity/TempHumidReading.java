@@ -25,13 +25,13 @@ public class TempHumidReading implements Reading{
     @JsonProperty("sensor-id")
     private int sensorId;
 
-    @Column(name = "temp_level", length = 5, precision = 2)
-    @JsonProperty("temp-level")
-    private double tempLevel;
-
     @Column(name = "auth_id")
     @JsonIgnore
     private int authId;
+
+    @Column(name = "temp_level", length = 5, precision = 2)
+    @JsonProperty("temp-level")
+    private double tempLevel;
 
     @Size(max = 1)
     @Column(name = "temp_scale")
@@ -44,7 +44,7 @@ public class TempHumidReading implements Reading{
     @Size(max = 20)
     @Column(name = "humidity_units")
     @JsonProperty("humidity-units")
-    private double humidityUnits;
+    private String humidityUnits;
 
     @Column(name = "time_recorded")
     @JsonProperty("time-recorded")
@@ -100,11 +100,11 @@ public class TempHumidReading implements Reading{
         this.humidity = humidity;
     }
 
-    public double getHumidityUnits() {
+    public String getHumidityUnits() {
         return humidityUnits;
     }
 
-    public void setHumidityUnits(double humidityUnits) {
+    public void setHumidityUnits(String humidityUnits) {
         this.humidityUnits = humidityUnits;
     }
 

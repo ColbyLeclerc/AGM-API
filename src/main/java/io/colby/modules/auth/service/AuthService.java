@@ -5,6 +5,13 @@ import io.colby.modules.auth.model.repository.AuthRepository;
 import io.colby.modules.routes.enclosures.model.entity.Enclosure;
 import io.colby.modules.routes.enclosures.repository.EnclosureRepository;
 import io.colby.modules.routes.plants.model.entity.Plant;
+import io.colby.modules.routes.readings.model.entity.SoilMoistureReading;
+import io.colby.modules.routes.readings.model.entity.SoilTempReading;
+import io.colby.modules.routes.readings.model.entity.TempHumidReading;
+import io.colby.modules.routes.readings.model.repository.SoilMoistureReadingRepository;
+import io.colby.modules.routes.readings.model.repository.SoilTempReadingRepository;
+import io.colby.modules.routes.readings.model.repository.TempHumidReadingRepository;
+import io.colby.modules.routes.sensors.entity.SensorType;
 import io.colby.modules.routes.sensors.model.entity.Sensor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,7 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class AuthService implements AuthServiceI{
+public class AuthService implements AuthServiceI {
 
 
     @Autowired
@@ -20,6 +27,15 @@ public class AuthService implements AuthServiceI{
 
     @Autowired
     EnclosureRepository enclosureRepository;
+
+    @Autowired
+    SoilMoistureReadingRepository soilMoistureRepository;
+
+    @Autowired
+    SoilTempReadingRepository soilTempRepository;
+
+    @Autowired
+    TempHumidReadingRepository tempHumidRepository;
 
     @Override
     public Optional<Auth> getFromToken(String token) {
@@ -52,6 +68,28 @@ public class AuthService implements AuthServiceI{
                 .filter(x -> x.getSensorId() == sensorId).findFirst();
 
         return sensor.isPresent();
+    }
+
+    @Override
+    public boolean userHasAccessToReading(Auth auth, SensorType sensorType, int readingId) {
+
+        switch (sensorType) {
+            case TEMPERATURE_HUMIDITY:
+                Optional<TempHumidReading> tempHumidReading = auth.getTempHumidReadings().stream()
+                        .filter(x -> x.getTempHumidReadingId() == readingId).findFirst();
+                return tempHumidReading.isPresent();
+            case SOIL_MOISTURE:
+                Optional<SoilMoistureReading> soilMoistureReading = auth.getSoilMoistureReadings().stream()
+                        .filter(x -> x.getSoilMoistureReadingId() == readingId).findFirst();
+                return soilMoistureReading.isPresent();
+            case SOIL_TEMPERATURE:
+                Optional<SoilTempReading> soilTempReading = auth.getSoilTempReadings().stream()
+                        .filter(x -> x.getSoilTempReadingId() == readingId).findFirst();
+                return soilTempReading.isPresent();
+            default:
+                return false;
+        }
+
     }
 
 }

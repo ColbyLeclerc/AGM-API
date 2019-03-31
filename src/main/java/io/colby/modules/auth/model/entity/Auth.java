@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.colby.modules.routes.enclosures.model.entity.Enclosure;
 import io.colby.modules.routes.plants.model.entity.Plant;
+import io.colby.modules.routes.readings.model.entity.SoilMoistureReading;
+import io.colby.modules.routes.readings.model.entity.SoilTempReading;
+import io.colby.modules.routes.readings.model.entity.TempHumidReading;
 import io.colby.modules.routes.sensors.model.entity.Sensor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.LazyCollection;
@@ -79,6 +82,22 @@ public class Auth {
     @JoinColumn(name = "auth_id", referencedColumnName = "auth_id", foreignKey=@ForeignKey(name = "Fk_auth_sensors"))
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<Sensor> sensors = new ArrayList<>();
+
+    @OneToMany()
+    @JoinColumn(name = "auth_id", referencedColumnName = "auth_id", foreignKey=@ForeignKey(name = "Fk_auth_temp_humid_reading"))
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private List<TempHumidReading> tempHumidReadings = new ArrayList<>();
+
+    @OneToMany()
+    @JoinColumn(name = "auth_id", referencedColumnName = "auth_id", foreignKey=@ForeignKey(name = "Fk_auth_soil_temp_reading"))
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private List<SoilTempReading> soilTempReadings = new ArrayList<>();
+
+    @OneToMany()
+    @JoinColumn(name = "auth_id", referencedColumnName = "auth_id", foreignKey=@ForeignKey(name = "Fk_auth_soil_moisture_reading"))
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private List<SoilMoistureReading> soilMoistureReadings = new ArrayList<>();
+
 
     public int getAuthId() {
         return authId;
@@ -192,5 +211,29 @@ public class Auth {
                 ", enclosures=" + enclosures +
                 ", sensors=" + sensors +
                 '}';
+    }
+
+    public List<TempHumidReading> getTempHumidReadings() {
+        return tempHumidReadings;
+    }
+
+    public void setTempHumidReadings(List<TempHumidReading> tempHumidReadings) {
+        this.tempHumidReadings = tempHumidReadings;
+    }
+
+    public List<SoilTempReading> getSoilTempReadings() {
+        return soilTempReadings;
+    }
+
+    public void setSoilTempReadings(List<SoilTempReading> soilTempReadings) {
+        this.soilTempReadings = soilTempReadings;
+    }
+
+    public List<SoilMoistureReading> getSoilMoistureReadings() {
+        return soilMoistureReadings;
+    }
+
+    public void setSoilMoistureReadings(List<SoilMoistureReading> soilMoistureReadings) {
+        this.soilMoistureReadings = soilMoistureReadings;
     }
 }

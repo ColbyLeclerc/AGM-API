@@ -26,6 +26,7 @@ public class Plant {
     private int plantId;
 
     @Column(name = "enclosure_id")
+    @JsonProperty("enclosure-id")
     private int enclosureId;
 
     @Column(name = "auth_id")

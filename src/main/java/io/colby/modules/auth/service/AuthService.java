@@ -5,11 +5,11 @@ import io.colby.modules.auth.model.repository.AuthRepository;
 import io.colby.modules.routes.enclosures.model.entity.Enclosure;
 import io.colby.modules.routes.enclosures.repository.EnclosureRepository;
 import io.colby.modules.routes.plants.model.entity.Plant;
+import io.colby.modules.routes.sensors.model.entity.Sensor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class AuthService implements AuthServiceI{
@@ -43,6 +43,15 @@ public class AuthService implements AuthServiceI{
                 .filter(x -> x.getPlantId() == plantId).findFirst();
 
         return plant.isPresent();
+    }
+
+    @Override
+    public boolean userHasAccessToSensor(Auth auth, int sensorId) {
+
+        Optional<Sensor> sensor = auth.getSensors().stream()
+                .filter(x -> x.getSensorId() == sensorId).findFirst();
+
+        return sensor.isPresent();
     }
 
 }

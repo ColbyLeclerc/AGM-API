@@ -10,7 +10,9 @@ public interface AuthServiceI {
 
     Optional<Auth> getFromToken(String token);
 
-    boolean userHasAccessToEnclosure(Auth auth, int id);
+    boolean userHasAccessToEnclosure(Auth auth, int enclosureId);
 
-    boolean userHasAccessToPlant(Auth auth, int id);
+    boolean userHasAccessToPlant(Auth auth, int plantId);
+
+    boolean userHasAccessToSensor(Auth auth, int sensorId);
 }

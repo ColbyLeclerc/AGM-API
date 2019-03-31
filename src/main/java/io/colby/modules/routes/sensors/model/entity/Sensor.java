@@ -1,13 +1,15 @@
 package io.colby.modules.routes.sensors.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.colby.modules.routes.sensors.entity.SensorType;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import io.colby.modules.routes.sensors.entity.*;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.StringJoiner;
 
 @Component
 @Entity
@@ -20,16 +22,21 @@ public class Sensor {
     @JsonProperty("sensor-id")
     private int sensorId;
 
-    @Column(name = "plant_id", nullable = true)
+    @Column(name = "auth_id")
+    @JsonIgnore
+    private int authId;
+
+    @Column(name = "plant_id")
     @JsonProperty("plant-id")
     private int plantId;
 
-    @Column(name = "enclosure_id", nullable = true)
+    @Column(name = "enclosure_id")
     @JsonProperty("enclosure-id")
     private int enclosureId;
 
-    @Column(name = "type", nullable = false)
-    private SensorType type;
+    @Column(name = "sensor_type", nullable = false)
+    @JsonProperty("sensor-type")
+    private String type;
 
     @Column(name = "is_plant", nullable = false)
     @JsonProperty("is-plant")
@@ -60,11 +67,11 @@ public class Sensor {
     }
 
     public SensorType getType() {
-        return type;
+        return SensorType.fromText(this.type);
     }
 
     public void setType(SensorType type) {
-        this.type = type;
+        this.type = type.toString();
     }
 
     public boolean isPlant() {
@@ -113,5 +120,28 @@ public class Sensor {
 
     public void setEnclosureId(int enclosureId) {
         this.enclosureId = enclosureId;
+    }
+
+    public int getAuthId() {
+        return authId;
+    }
+
+    public void setAuthId(int authId) {
+        this.authId = authId;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", Sensor.class.getSimpleName() + "[", "]")
+                .add("\nsensorId=" + sensorId)
+                .add("\nauthId=" + authId)
+                .add("\nplantId=" + plantId)
+                .add("\nenclosureId=" + enclosureId)
+                .add("\ntype='" + type + "'")
+                .add("\nisPlant=" + isPlant)
+                .add("\nisEnclosure=" + isEnclosure)
+                .add("\ninsertTimestamp=" + insertTimestamp)
+                .add("\nupdateTimestamp=" + updateTimestamp)
+                .toString();
     }
 }

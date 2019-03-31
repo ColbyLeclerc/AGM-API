@@ -264,7 +264,7 @@ public class PlantControllerTest {
         Assert.assertEquals("{\"message\": \"plant deleted successfully\", \"deleted\":" +
                 " \"true\", \"plant-id\": " + PLANT_ID + "}", response.getBody());
 
-        ResponseEntity<String> responseGetAfter = restTemplate.exchange(getRootUrl() + "/enclosures/" + PLANT_ID,
+        ResponseEntity<String> responseGetAfter = restTemplate.exchange(getRootUrl() + "/plants/" + PLANT_ID,
                 HttpMethod.GET, entity, String.class);
 
         Assert.assertEquals(HttpServletResponse.SC_NOT_FOUND, responseGetAfter.getStatusCode().value());

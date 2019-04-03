@@ -1,6 +1,5 @@
 package io.colby.modules.routes.readings.controller;
 
-
 import io.colby.modules.auth.model.entity.Auth;
 import io.colby.modules.auth.service.AuthService;
 import io.colby.modules.routes.readings.model.entity.*;
@@ -18,7 +17,6 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 //TODO add filtering
-
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
@@ -190,6 +188,75 @@ public class ReadingController {
                 response.setStatus(HttpServletResponse.SC_CREATED);
 
                 return CompletableFuture.completedFuture(soilTempSearch.get());
+
+            default:
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+
+        }
+
+        return CompletableFuture.completedFuture(null);
+
+    }
+
+    //TODO create way to mass delete readings more easily
+
+    @RequestMapping(value = {"/readings/{sensor}/{id}"},
+            method = RequestMethod.DELETE,
+            produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @Async("asyncExecutor")
+    public CompletableFuture<String> deleteReading(
+            @PathVariable("id") int id,
+            @PathVariable("sensor") SensorType sensor,
+            @RequestHeader(value = "Authorization") String auth,
+            HttpServletResponse response
+    ) {
+
+        Optional<Auth> authRec = authService.getFromToken(auth);
+
+        if (!authRec.isPresent()){
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return CompletableFuture.completedFuture(null);
+        }
+
+        if (!authService.userHasAccessToReading(authRec.get(),sensor, id)) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return CompletableFuture.completedFuture(null);
+        }
+
+        switch (sensor) {
+            case TEMPERATURE_HUMIDITY:
+
+                tempHumidRepository.deleteById(id);
+
+                if (tempHumidRepository.findById(id).isPresent()) {
+                    return CompletableFuture.completedFuture("{\"message\": \"error when attempting to delete reading\", \"deleted\": \"false\", \"temperature-humidity-reading-id\": " + id + "}");
+                }
+
+                return CompletableFuture.completedFuture("{\"message\": \"reading deleted successfully\", \"deleted\": \"true\", \"temperature-humidity-reading-id\": " + id + "}");
+
+
+            case SOIL_MOISTURE:
+
+                soilMoistureRepository.deleteById(id);
+
+                if (soilMoistureRepository.findById(id).isPresent()) {
+                    return CompletableFuture.completedFuture("{\"message\": \"error when attempting to delete reading\", \"deleted\": \"false\", \"soil-moisture-reading-id\": " + id + "}");
+                }
+
+                return CompletableFuture.completedFuture("{\"message\": \"reading deleted successfully\", \"deleted\": \"true\", \"soil-moisture-reading-id\": " + id + "}");
+
+
+            case SOIL_TEMPERATURE:
+
+                soilTempRepository.deleteById(id);
+
+                if (soilTempRepository.findById(id).isPresent()) {
+                    return CompletableFuture.completedFuture("{\"message\": \"error when attempting to delete reading\", \"deleted\": \"false\", \"soil-temperature-reading-id\": " + id + "}");
+                }
+
+                return CompletableFuture.completedFuture("{\"message\": \"reading deleted successfully\", \"deleted\": \"true\", \"soil-temperature-reading-id\": " + id + "}");
+
 
             default:
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);

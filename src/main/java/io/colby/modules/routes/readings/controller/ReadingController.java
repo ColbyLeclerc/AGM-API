@@ -13,11 +13,15 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 //TODO add filtering
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
+//TODO Figure out proper parameters to grab readings for each enclosure (get by enclosure ID, or get by sensor ID)
 
 @RestController
 public class ReadingController {
@@ -33,7 +37,7 @@ public class ReadingController {
 
     @Autowired
     AuthService authService;
-
+//    @CrossOrigin(origins = "http://localhost:3000")
     @RequestMapping(value = {"/readings/{sensor}/{id}"},
             method = RequestMethod.GET)
     @ResponseBody
@@ -96,6 +100,46 @@ public class ReadingController {
 
     }
 
+    @RequestMapping(value = {"/readings/{sensor}"},
+            method = RequestMethod.GET
+    )
+    @ResponseBody
+    @Async("asyncExecutor")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public CompletableFuture<List<Reading>> getReadingSensorAll(
+            @PathVariable("sensor") SensorType sensorType,
+            @RequestHeader(value = "Authorization") String auth,
+            HttpServletResponse response
+    ) {
+
+        Optional<Auth> authRec = authService.getFromToken(auth);
+
+        if (!authRec.isPresent()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return CompletableFuture.completedFuture(null);
+        }
+
+        switch (sensorType) {
+            case TEMPERATURE_HUMIDITY:
+
+                return CompletableFuture.completedFuture(tempHumidRepository.findAllByAuthId(authRec.get().getAuthId()));
+
+            case SOIL_MOISTURE:
+
+                return CompletableFuture.completedFuture(soilMoistureRepository.findAllByAuthId(authRec.get().getAuthId()));
+
+            case SOIL_TEMPERATURE:
+
+                return CompletableFuture.completedFuture(soilTempRepository.findAllByAuthId(authRec.get().getAuthId()));
+
+            default:
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+
+        }
+
+        return CompletableFuture.completedFuture(null);
+
+    }
 
     @RequestMapping(value = {"/readings/{sensor}"},
             method = RequestMethod.POST,

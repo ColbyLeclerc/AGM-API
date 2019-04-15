@@ -1,9 +1,12 @@
 package io.colby.modules.routes.sensors.controller;
 
 
-
 import io.colby.modules.auth.model.entity.Auth;
 import io.colby.modules.auth.service.AuthService;
+import io.colby.modules.routes.enclosures.model.entity.Enclosure;
+import io.colby.modules.routes.enclosures.repository.EnclosureRepository;
+import io.colby.modules.routes.plants.model.entity.Plant;
+import io.colby.modules.routes.plants.model.repository.PlantRepository;
 import io.colby.modules.routes.sensors.model.entity.Sensor;
 import io.colby.modules.routes.sensors.model.repository.SensorRepository;
 import io.colby.utility.StringUtility;
@@ -28,6 +31,12 @@ public class SensorController {
     SensorRepository sensorRepository;
 
     @Autowired
+    PlantRepository plantRepository;
+
+    @Autowired
+    EnclosureRepository enclosureRepository;
+
+    @Autowired
     AuthService authService;
 
     @RequestMapping(value = {"/sensors/{id}"},
@@ -42,7 +51,7 @@ public class SensorController {
 
         Optional<Auth> authRec = authService.getFromToken(auth);
 
-        if (!authRec.isPresent()){
+        if (!authRec.isPresent()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return CompletableFuture.completedFuture(null);
         }
@@ -74,7 +83,7 @@ public class SensorController {
 
         Optional<Auth> authRec = authService.getFromToken(auth);
 
-        if (!authRec.isPresent()){
+        if (!authRec.isPresent()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return CompletableFuture.completedFuture(null);
         }
@@ -90,23 +99,43 @@ public class SensorController {
             produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Async("asyncExecutor")
+    @CrossOrigin(origins = "http://localhost:3000")
     public CompletableFuture<Sensor> createSensor(
             @Valid @RequestBody Sensor request,
             @RequestHeader(value = "Authorization") String auth,
             HttpServletResponse response
     ) {
 
+        System.out.println("Req:" + request.toString());
+
         Optional<Auth> authRec = authService.getFromToken(auth);
 
-        if (!authRec.isPresent()){
+        if (!authRec.isPresent()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return CompletableFuture.completedFuture(null);
         }
 
+        Optional<Plant> plantIdPassed = plantRepository.findByPlantId(request.getPlantId());
+        Optional<Enclosure> enclosureIdPassed = enclosureRepository.findByEnclosureId(request.getEnclosureId());
+
+        if (request.isEnclosure() && !enclosureIdPassed.isPresent()){
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            Sensor resp = new Sensor();
+            resp.setMessage("Enclosure ID does not exist");
+            return CompletableFuture.completedFuture(resp);
+        }
+
+        if (request.isPlant() && !plantIdPassed.isPresent()){
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            Sensor resp = new Sensor();
+            resp.setMessage("Plant ID does not exist");
+            return CompletableFuture.completedFuture(resp);
+        }
+
+        plantIdPassed.ifPresent(plant -> request.setEnclosureId(plant.getEnclosureId()));
+
         //TODO for other post requests
         request.setAuthId(authRec.get().getAuthId());
-
-        System.out.println(StringUtility.applyCyan(request.toString()));
 
         Sensor sensor = sensorRepository.save(request);
 
@@ -130,6 +159,7 @@ public class SensorController {
             produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Async("asyncExecutor")
+    @CrossOrigin(origins = "http://localhost:3000")
     public CompletableFuture<String> deleteSensor(
             @PathVariable("id") int id,
             @RequestHeader(value = "Authorization") String auth,
@@ -139,7 +169,7 @@ public class SensorController {
 
         Optional<Auth> authRec = authService.getFromToken(auth);
 
-        if (!authRec.isPresent()){
+        if (!authRec.isPresent()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return CompletableFuture.completedFuture(null);
         }

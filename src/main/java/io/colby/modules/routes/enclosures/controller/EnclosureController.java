@@ -20,7 +20,8 @@ import java.util.concurrent.CompletableFuture;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 //TODO update documentation to reflect changes in response JSON not being a map, and removing plant sensors from response
-
+// TODO have sensor array for enclosures be only enclosure sensors. Have sensor array for plants be only plant sensors
+// TODO remove plant id and enclosure id from sensor list
 @RestController
 public class EnclosureController {
 
@@ -70,6 +71,7 @@ public class EnclosureController {
             method = RequestMethod.GET)
     @ResponseBody
     @Async("asyncExecutor")
+    @CrossOrigin(origins = "http://localhost:3000")
     public CompletableFuture<List<Enclosure>> getAllEnclosures(
             @RequestHeader(value = "Authorization") String auth,
             HttpServletResponse response
@@ -82,6 +84,8 @@ public class EnclosureController {
             return CompletableFuture.completedFuture(null);
         }
 
+//        response.setHeader("Access-Control-Allow-Origin", "*");
+
         return CompletableFuture.completedFuture(authRec.get().getEnclosures());
 
     }
@@ -93,6 +97,7 @@ public class EnclosureController {
             produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Async("asyncExecutor")
+    @CrossOrigin(origins = "http://localhost:3000")
     public CompletableFuture<Enclosure> createEnclosure(
             @Valid @RequestBody Enclosure request,
             @RequestHeader(value = "Authorization") String auth,

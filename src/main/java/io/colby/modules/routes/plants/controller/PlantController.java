@@ -66,6 +66,7 @@ public class PlantController {
             method = RequestMethod.GET)
     @ResponseBody
     @Async("asyncExecutor")
+    @CrossOrigin(origins = "http://localhost:3000")
     public CompletableFuture<List<Plant>> getAllPlants(
             @RequestHeader(value = "Authorization") String auth,
             HttpServletResponse response
@@ -89,6 +90,7 @@ public class PlantController {
             produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Async("asyncExecutor")
+    @CrossOrigin(origins = "http://localhost:3000")
     public CompletableFuture<Plant> createPlant(
             @Valid @RequestBody Plant request,
             @RequestHeader(value = "Authorization") String auth,
@@ -123,6 +125,7 @@ public class PlantController {
             produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Async("asyncExecutor")
+    @CrossOrigin(origins = "http://localhost:3000")
     public CompletableFuture<String> deletePlant(
             @PathVariable("id") int id,
             @RequestHeader(value = "Authorization") String auth,

@@ -72,10 +72,10 @@ public class Plant {
     @JsonProperty("last-updated-date-time")
     private LocalDateTime updateTimestamp;
 
-    @OneToMany
-    @JoinColumn(name = "plant_id", referencedColumnName = "plant_id", foreignKey=@ForeignKey(name = "Fk_plant_sensors"))
-    @LazyCollection(LazyCollectionOption.FALSE)
-    private List<Sensor> sensors;
+//    @OneToMany
+//    @JoinColumn(name = "plant_id", referencedColumnName = "plant_id", foreignKey=@ForeignKey(name = "Fk_plant_sensors"))
+//    @LazyCollection(LazyCollectionOption.FALSE)
+//    private List<Sensor> sensors;
 
     public Plant(int plantId){
         this.plantId = plantId;
@@ -226,13 +226,13 @@ public class Plant {
         this.authId = authId;
     }
 
-    public List<Sensor> getSensors() {
-        return sensors;
-    }
+//    public List<Sensor> getSensors() {
+//        return sensors;
+//    }
 
-    public void setSensors(List<Sensor> sensors) {
-        this.sensors = sensors;
-    }
+//    public void setSensors(List<Sensor> sensors) {
+//        this.sensors = sensors;
+//    }
 
     @Override
     public String toString() {
@@ -249,7 +249,7 @@ public class Plant {
                 ", \ndatePlanted=" + datePlanted +
                 ", \ninsertTimestamp=" + insertTimestamp +
                 ", \nupdateTimestamp=" + updateTimestamp +
-                ", \nsensors=" + sensors +
+//                ", \nsensors=" + sensors +
                 '}';
     }
 }

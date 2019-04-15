@@ -14,7 +14,9 @@ import java.util.StringJoiner;
 @Component
 @Entity
 @Table(name = "sensor")
-public class Sensor {
+public class Sensor implements SensorResponse{
+
+    private String message = "";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -143,5 +145,14 @@ public class Sensor {
                 .add("\ninsertTimestamp=" + insertTimestamp)
                 .add("\nupdateTimestamp=" + updateTimestamp)
                 .toString();
+    }
+
+    @Override
+    public String getMessage() {
+        return this.message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

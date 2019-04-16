@@ -1,7 +1,6 @@
 package io.colby.modules.routes.enclosures.controller;
 
 
-
 import io.colby.modules.auth.model.entity.Auth;
 import io.colby.modules.auth.service.AuthService;
 import io.colby.modules.routes.enclosures.model.entity.Enclosure;
@@ -46,7 +45,7 @@ public class EnclosureController {
 
         Optional<Auth> authRec = authService.getFromToken(auth);
 
-        if (!authRec.isPresent()){
+        if (!authRec.isPresent()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return CompletableFuture.completedFuture(null);
         }
@@ -79,7 +78,7 @@ public class EnclosureController {
 
         Optional<Auth> authRec = authService.getFromToken(auth);
 
-        if (!authRec.isPresent()){
+        if (!authRec.isPresent()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return CompletableFuture.completedFuture(null);
         }
@@ -106,7 +105,7 @@ public class EnclosureController {
 
         Optional<Auth> authRec = authService.getFromToken(auth);
 
-        if (!authRec.isPresent()){
+        if (!authRec.isPresent()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return CompletableFuture.completedFuture(null);
         }
@@ -142,7 +141,7 @@ public class EnclosureController {
 
         Optional<Auth> authRec = authService.getFromToken(auth);
 
-        if (!authRec.isPresent()){
+        if (!authRec.isPresent()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return CompletableFuture.completedFuture(null);
         }
@@ -150,6 +149,13 @@ public class EnclosureController {
         if (!authService.userHasAccessToEnclosure(authRec.get(), id)) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return CompletableFuture.completedFuture(null);
+        }
+
+        Optional<Enclosure> enc = enclosureRepository.findByEnclosureId(id);
+
+        if (enc.isPresent() && (enc.get().getPlants().size() != 0 || enc.get().getSensors().size() != 0)) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return CompletableFuture.completedFuture("{\"message\": \"error when attempting to delete enclosure. Cannot delete enclosure with associated sensors and/or plants.\", \"deleted\": \"false\", \"enclosure-id\": " + id + "}");
         }
 
         enclosureRepository.deleteById(id);

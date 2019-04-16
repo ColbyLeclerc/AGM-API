@@ -47,3 +47,31 @@ running the application server does not have elevated privileges.
 
 Obviously the settings will vary depending on the requirements of your deployment. This will at least get the server
 running for testing. 
+
+## Example application.properties
+
+```
+#Only display JSON fields in response bodies that are non-null
+spring.jackson.default-property-inclusion=non_null
+
+# Details for our datasource
+spring.datasource.url = jdbc:postgresql://<db_host>/<database>?<ssl_parameters>
+spring.datasource.username = <username>
+spring.datasource.password = <password>
+
+spring.datasource.testWhileIdle = true
+spring.datasource.validationQuery = SELECT 1
+
+# Naming strategy
+spring.jpa.hibernate.naming-strategy = org.hibernate.cfg.ImprovedNamingStrategy
+
+# Hibernate properties
+spring.jpa.database-platform = org.hibernate.dialect.PostgreSQL94Dialect
+spring.jpa.show-sql = true
+
+#spring.jpa.hibernate.ddl-auto = update | create-drop
+spring.jpa.hibernate.ddl-auto = update
+
+logging.level.org.hibernate.SQL=DEBUG
+logging.level.org.hibernate.type=TRACE
+```

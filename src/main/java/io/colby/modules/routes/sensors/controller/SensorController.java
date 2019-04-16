@@ -121,14 +121,14 @@ public class SensorController {
         if (request.isEnclosure() && !enclosureIdPassed.isPresent()){
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             Sensor resp = new Sensor();
-            resp.setMessage("Enclosure ID does not exist");
+//            resp.setMessage("Enclosure ID does not exist");
             return CompletableFuture.completedFuture(resp);
         }
 
         if (request.isPlant() && !plantIdPassed.isPresent()){
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             Sensor resp = new Sensor();
-            resp.setMessage("Plant ID does not exist");
+//            resp.setMessage("Plant ID does not exist");
             return CompletableFuture.completedFuture(resp);
         }
 

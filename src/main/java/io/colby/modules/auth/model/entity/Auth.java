@@ -68,34 +68,42 @@ public class Auth {
     @Column(name = "update_timestamp", nullable = false)
     private LocalDateTime updateTimestamp;
 
+//    NOTE: JsonIgnore is used to separate out the auth record response from the associated relations
+
     @OneToMany()
     @JoinColumn(name = "auth_id", referencedColumnName = "auth_id", foreignKey=@ForeignKey(name = "Fk_auth_plants"))
     @LazyCollection(LazyCollectionOption.FALSE)
+    @JsonIgnore
     private List<Plant> plants = new ArrayList<>();
 
     @OneToMany()
     @JoinColumn(name = "auth_id", referencedColumnName = "auth_id", foreignKey=@ForeignKey(name = "Fk_auth_enclosures"))
     @LazyCollection(LazyCollectionOption.FALSE)
+    @JsonIgnore
     private List<Enclosure> enclosures = new ArrayList<>();
 
     @OneToMany()
     @JoinColumn(name = "auth_id", referencedColumnName = "auth_id", foreignKey=@ForeignKey(name = "Fk_auth_sensors"))
     @LazyCollection(LazyCollectionOption.FALSE)
+    @JsonIgnore
     private List<Sensor> sensors = new ArrayList<>();
 
     @OneToMany()
     @JoinColumn(name = "auth_id", referencedColumnName = "auth_id", foreignKey=@ForeignKey(name = "Fk_auth_temp_humid_reading"))
     @LazyCollection(LazyCollectionOption.FALSE)
+    @JsonIgnore
     private List<TempHumidReading> tempHumidReadings = new ArrayList<>();
 
     @OneToMany()
     @JoinColumn(name = "auth_id", referencedColumnName = "auth_id", foreignKey=@ForeignKey(name = "Fk_auth_soil_temp_reading"))
     @LazyCollection(LazyCollectionOption.FALSE)
+    @JsonIgnore
     private List<SoilTempReading> soilTempReadings = new ArrayList<>();
 
     @OneToMany()
     @JoinColumn(name = "auth_id", referencedColumnName = "auth_id", foreignKey=@ForeignKey(name = "Fk_auth_soil_moisture_reading"))
     @LazyCollection(LazyCollectionOption.FALSE)
+    @JsonIgnore
     private List<SoilMoistureReading> soilMoistureReadings = new ArrayList<>();
 
 

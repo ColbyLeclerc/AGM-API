@@ -55,6 +55,7 @@ running for testing.
 ```
 #Only display JSON fields in response bodies that are non-null
 spring.jackson.default-property-inclusion=non_null
+server.servlet.context-path=/agm/v1
 
 # Details for our datasource
 spring.datasource.url = jdbc:postgresql://<db_host>/<database>?<ssl_parameters>

@@ -37,21 +37,22 @@ public class Auth {
 
     @Size(max = 75)
     @Column(name = "first_name")
-    @JsonProperty("first_name")
+    @JsonProperty("first-name")
     private String firstName;
 
     @Size(max = 75)
     @Column(name = "last_name")
-    @JsonProperty("last_name")
+    @JsonProperty("last-name")
     private String lastName;
 
     @Size(max = 255)
     @Column(name = "email_addr")
-    @JsonProperty("email_addr")
+    @JsonProperty("email-addr")
     private String emailAddr;
 
     @Size(max = 255)
     @Column(name = "password_hash")
+    @JsonProperty("password-hash")
     @JsonIgnore
     private String passwordHash;
 
@@ -61,11 +62,13 @@ public class Auth {
     private String salt;
 
     @CreationTimestamp
-    @Column(nullable = false, name = "insert_timestamp")
+    @Column(nullable = false, name = "create_timestamp")
+    @JsonProperty("create-timestamp")
     private LocalDateTime insertTimestamp;
 
     @UpdateTimestamp
     @Column(name = "update_timestamp", nullable = false)
+    @JsonProperty("update-timestamp")
     private LocalDateTime updateTimestamp;
 
 //    NOTE: JsonIgnore is used to separate out the auth record response from the associated relations

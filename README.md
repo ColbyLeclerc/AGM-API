@@ -20,6 +20,8 @@ You can run the .jar file created using `java -jar <jar_file_name>`, or if you
 want to have the `application.properties` file external to the compiled
 jar file (recommended), then run `java -Dspring.config.location=<location_to_application.properties> -jar <jar_file_name>`
 
+Note for database setup, provide the correct parameters in `application.properties`, and the tables and needed constraints will be created automatically. Thus, there is no need to run the `createTables.sql` script.
+
 If you want to run the application as a service, here's an example of what I've done to run the application server using 
 systemd:
 

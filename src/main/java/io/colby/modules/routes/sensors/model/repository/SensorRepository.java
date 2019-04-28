@@ -9,6 +9,12 @@ import java.util.Optional;
 @Repository
 public interface SensorRepository extends CrudRepository<Sensor, Integer> {
 
+    /**
+     * Retrieves the Sensor record using the passed sensorId
+     *
+     * @param sensorId ID associated with the sensor
+     * @return Sensor record
+     */
     Optional<Sensor> findBySensorId(int sensorId);
 
 }

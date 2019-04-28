@@ -21,10 +21,9 @@ public class SpringAsyncConfig implements AsyncConfigurer {
         executor.setQueueCapacity(100);
         executor.setThreadNamePrefix("AGMSpringAsyncThread-");
         executor.initialize();
-        
+
         return executor;
     }
-
 
 
 }

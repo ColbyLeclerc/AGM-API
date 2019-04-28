@@ -3,7 +3,6 @@ package io.colby.modules.routes.sensors.entity;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.colby.modules.routes.sensors.model.entity.Sensor;
 
 public enum SensorType {
     @JsonProperty("temperature-humidity")

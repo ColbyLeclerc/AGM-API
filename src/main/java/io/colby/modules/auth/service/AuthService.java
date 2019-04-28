@@ -37,12 +37,25 @@ public class AuthService implements AuthServiceI {
     @Autowired
     TempHumidReadingRepository tempHumidRepository;
 
+    /**
+     * Get Auth record from token
+     *
+     * @param token Authorization string from header
+     * @return Auth record
+     */
     @Override
     public Optional<Auth> getFromToken(String token) {
 
         return authRepository.findAuthByToken(token);
     }
 
+    /**
+     * Checks if Auth record tied to user has access to enclosure
+     *
+     * @param auth        Auth record associated with user
+     * @param enclosureId enclosureId to check
+     * @return true if user has access, false otherwise
+     */
     @Override
     public boolean userHasAccessToEnclosure(Auth auth, int enclosureId) {
 
@@ -52,6 +65,13 @@ public class AuthService implements AuthServiceI {
         return enclosure.isPresent();
     }
 
+    /**
+     * Checks if Auth record tied to user has access to plant
+     *
+     * @param auth    Auth record associated with user
+     * @param plantId plantId to check
+     * @return true if user has access, false otherwise
+     */
     @Override
     public boolean userHasAccessToPlant(Auth auth, int plantId) {
 
@@ -61,6 +81,13 @@ public class AuthService implements AuthServiceI {
         return plant.isPresent();
     }
 
+    /**
+     * Checks if Auth record tied to user has access to sensor
+     *
+     * @param auth     Auth record associated with user
+     * @param sensorId sensorId to check
+     * @return true if user has access, false otherwise
+     */
     @Override
     public boolean userHasAccessToSensor(Auth auth, int sensorId) {
 
@@ -70,9 +97,17 @@ public class AuthService implements AuthServiceI {
         return sensor.isPresent();
     }
 
+    /**
+     * Checks if Auth record tied to user has access to reading
+     *
+     * @param auth      Auth record associated with user
+     * @param readingId readingId to check
+     * @return true if user has access, false otherwise
+     */
     @Override
     public boolean userHasAccessToReading(Auth auth, SensorType sensorType, int readingId) {
 
+        //For each case, find the first result that equals the passed readingId
         switch (sensorType) {
             case TEMPERATURE_HUMIDITY:
                 Optional<TempHumidReading> tempHumidReading = auth.getTempHumidReadings().stream()

@@ -18,9 +18,11 @@ import java.util.concurrent.CompletableFuture;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-//TODO update documentation to reflect changes in response JSON not being a map, and removing plant sensors from response
-// TODO have sensor array for enclosures be only enclosure sensors. Have sensor array for plants be only plant sensors
-// TODO remove plant id and enclosure id from sensor list
+/*
+Note: @CrossOrigin annotation is to allow a local instance of the frontend
+server to ping the api. In production, such architecture would not be used,
+as the requests will be going to the same domain.
+ */
 @RestController
 public class EnclosureController {
 
@@ -110,7 +112,6 @@ public class EnclosureController {
             return CompletableFuture.completedFuture(null);
         }
 
-        //TODO for other post requests
         request.setAuthId(authRec.get().getAuthId());
 
         Enclosure enclosure = enclosureRepository.save(request);

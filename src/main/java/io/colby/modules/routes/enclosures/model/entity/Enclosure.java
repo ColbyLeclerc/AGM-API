@@ -18,13 +18,12 @@ import java.security.InvalidParameterException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 //TODO for NotBlank fields, setup proper error handling for better messages
 
 @Component
 @Entity
-@Table(name="enclosure")
+@Table(name = "enclosure")
 public class Enclosure {
 
     @Id
@@ -70,12 +69,12 @@ public class Enclosure {
     private double height;
 
     @OneToMany()
-    @JoinColumn(name = "enclosure_id", referencedColumnName = "enclosure_id", foreignKey=@ForeignKey(name = "Fk_enclosure_plants"))
+    @JoinColumn(name = "enclosure_id", referencedColumnName = "enclosure_id", foreignKey = @ForeignKey(name = "Fk_enclosure_plants"))
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<Plant> plants = new ArrayList<>();
 
     @OneToMany//was plant_id
-    @JoinColumn(name = "enclosure_id", referencedColumnName = "enclosure_id", foreignKey=@ForeignKey(name = "Fk_enclosure_sensors"))
+    @JoinColumn(name = "enclosure_id", referencedColumnName = "enclosure_id", foreignKey = @ForeignKey(name = "Fk_enclosure_sensors"))
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<Sensor> sensors;
 
@@ -91,15 +90,15 @@ public class Enclosure {
         this.height = height;
     }
 
-    Enclosure(){
+    Enclosure() {
 
     }
 
-    public Enclosure(int enclosureId){
+    public Enclosure(int enclosureId) {
         this.enclosureId = enclosureId;
     }
 
-    public Enclosure(String title){
+    public Enclosure(String title) {
         if (Strings.isNullOrEmpty(title))
             throw new InvalidParameterException("title cannot be null or empty");
 
@@ -108,6 +107,7 @@ public class Enclosure {
 
     /**
      * Get all plants within the enclosure. Empty if no plants exist.
+     *
      * @return ArrayList with populated plants. Empty ArrayList if none exist
      */
     public List<Plant> getPlants() {
@@ -125,6 +125,7 @@ public class Enclosure {
 
     /**
      * Set the readable title of the enclosure
+     *
      * @param title String enclosure title
      */
     public void setTitle(String title) {
@@ -133,6 +134,7 @@ public class Enclosure {
 
     /**
      * Retrieves the unique id of the enclosure
+     *
      * @return int unique id of the enclosure
      */
     public int getEnclosureId() {
@@ -150,6 +152,7 @@ public class Enclosure {
 
     /**
      * The readable title of the enclosure
+     *
      * @return Title of the enclosure
      */
     public String getTitle() {
@@ -158,6 +161,7 @@ public class Enclosure {
 
     /**
      * Location of the enclosure as a String.
+     *
      * @return Enclosure's location
      */
     public String getLocation() {
@@ -166,6 +170,7 @@ public class Enclosure {
 
     /**
      * Sets the location of the enclosure
+     *
      * @param location Enclosure's location
      */
     public void setLocation(String location) {
@@ -173,6 +178,7 @@ public class Enclosure {
     }
 
     //TODO change to ENUM
+
     /**
      * Measuring units used for the length, width, and height. Can be one of the following:
      * FEET, INCHES, YARDS, METERS, CENTIMETERS
@@ -186,7 +192,7 @@ public class Enclosure {
     /**
      * Sets the measuring units used for the length, width, and height.
      * Can be one of the following: FEET, INCHES, YARDS, METERS, CENTIMETERS
-     *
+     * <p>
      * Represents the units of measurements for the Length, Width,
      * and Height
      *
@@ -198,6 +204,7 @@ public class Enclosure {
 
     /**
      * The time the record was created
+     *
      * @return LocalDateTime record was created
      */
     public LocalDateTime getInsertTimestamp() {
@@ -206,6 +213,7 @@ public class Enclosure {
 
     /**
      * Set the insert time for the enclosure
+     *
      * @param insertTimestamp LocalDateTime time enclosure was created
      */
     public void setInsertTimestamp(LocalDateTime insertTimestamp) {
@@ -214,6 +222,7 @@ public class Enclosure {
 
     /**
      * The time the record was updated
+     *
      * @return LocalDateTime record was updated
      */
     public LocalDateTime getUpdateTimestamp() {
@@ -222,6 +231,7 @@ public class Enclosure {
 
     /**
      * Set the last update time for the enclosure
+     *
      * @param updateTimestamp LocalDateTime last time enclosure was updated
      */
     public void setUpdateTimestamp(LocalDateTime updateTimestamp) {
@@ -239,6 +249,7 @@ public class Enclosure {
 
     /**
      * Set the length of the enclosure
+     *
      * @param length double enclosure length
      */
     public void setLength(double length) {
@@ -269,6 +280,7 @@ public class Enclosure {
 
     /**
      * Set the height of the enclosure
+     *
      * @param height double enclosure height
      */
     public void setHeight(double height) {
@@ -290,18 +302,38 @@ public class Enclosure {
                 '}';
     }
 
+    /**
+     * Gets the list of associated sensors
+     *
+     * @return List of associated sensors
+     */
     public List<Sensor> getSensors() {
         return sensors;
     }
 
+    /**
+     * Set the list of associated sensors
+     *
+     * @param sensors Sensors to associate
+     */
     public void setSensors(List<Sensor> sensors) {
         this.sensors = sensors;
     }
 
+    /**
+     * Get associated auth record id
+     *
+     * @return auth record id
+     */
     public int getAuthId() {
         return authId;
     }
 
+    /**
+     * Sets the associated auth record id
+     *
+     * @param authId auth record id
+     */
     public void setAuthId(int authId) {
         this.authId = authId;
     }

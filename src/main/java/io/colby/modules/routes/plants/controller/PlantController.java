@@ -17,9 +17,6 @@ import java.util.concurrent.CompletableFuture;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-//TODO update documentation to reflect changes in response JSON not being a map, and removing plant sensors from response
-//TODO change endpoint from /sensor/enclosure to /enclosure
-//TODO add PUT
 @RestController
 public class PlantController {
 
@@ -41,7 +38,7 @@ public class PlantController {
 
         Optional<Auth> authRec = authService.getFromToken(auth);
 
-        if (!authRec.isPresent()){
+        if (!authRec.isPresent()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return CompletableFuture.completedFuture(null);
         }
@@ -53,7 +50,7 @@ public class PlantController {
 
         Optional<Plant> plantSearch = plantRepository.findByPlantId(id);
 
-        if (!plantSearch.isPresent()){
+        if (!plantSearch.isPresent()) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return CompletableFuture.completedFuture(null);
         }
@@ -74,7 +71,7 @@ public class PlantController {
 
         Optional<Auth> authRec = authService.getFromToken(auth);
 
-        if (!authRec.isPresent()){
+        if (!authRec.isPresent()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return CompletableFuture.completedFuture(null);
         }
@@ -99,7 +96,7 @@ public class PlantController {
 
         Optional<Auth> authRec = authService.getFromToken(auth);
 
-        if (!authRec.isPresent()){
+        if (!authRec.isPresent()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return CompletableFuture.completedFuture(null);
         }
@@ -109,7 +106,7 @@ public class PlantController {
         Plant plant = plantRepository.save(request);
         Optional<Plant> plantSearch = plantRepository.findByPlantId(plant.getPlantId());
 
-        if (!plantSearch.isPresent()){
+        if (!plantSearch.isPresent()) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return CompletableFuture.completedFuture(null);
         }
@@ -134,7 +131,7 @@ public class PlantController {
 
         Optional<Auth> authRec = authService.getFromToken(auth);
 
-        if (!authRec.isPresent()){
+        if (!authRec.isPresent()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return CompletableFuture.completedFuture(null);
         }

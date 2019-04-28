@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -37,7 +36,8 @@ public class ReadingController {
 
     @Autowired
     AuthService authService;
-//    @CrossOrigin(origins = "http://localhost:3000")
+
+    //    @CrossOrigin(origins = "http://localhost:3000")
     @RequestMapping(value = {"/readings/{sensor}/{id}"},
             method = RequestMethod.GET)
     @ResponseBody
@@ -258,12 +258,12 @@ public class ReadingController {
 
         Optional<Auth> authRec = authService.getFromToken(auth);
 
-        if (!authRec.isPresent()){
+        if (!authRec.isPresent()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return CompletableFuture.completedFuture(null);
         }
 
-        if (!authService.userHasAccessToReading(authRec.get(),sensor, id)) {
+        if (!authService.userHasAccessToReading(authRec.get(), sensor, id)) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return CompletableFuture.completedFuture(null);
         }

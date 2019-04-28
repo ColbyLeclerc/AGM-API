@@ -2,21 +2,17 @@ package io.colby.modules.routes.plants.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.colby.modules.routes.sensors.model.entity.Sensor;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Component
 @Entity
-@Table(name="plant")
+@Table(name = "plant")
 public class Plant {
 
     @Id
@@ -77,7 +73,7 @@ public class Plant {
 //    @LazyCollection(LazyCollectionOption.FALSE)
 //    private List<Sensor> sensors;
 
-    public Plant(int plantId){
+    public Plant(int plantId) {
         this.plantId = plantId;
     }
 
@@ -87,6 +83,7 @@ public class Plant {
 
     /**
      * Retrieve the enclosure id of the Enclosure the plant resides within
+     *
      * @return int enclosureId
      */
     public int getEnclosureId() {
@@ -95,6 +92,7 @@ public class Plant {
 
     /**
      * Set the enclosure id of the Enclosure the plant resides within
+     *
      * @param enclosureId int enclosureId
      */
     public void setEnclosureId(int enclosureId) {
@@ -104,6 +102,7 @@ public class Plant {
 
     /**
      * Retrieve the unique plant identifier
+     *
      * @return int plantId
      */
     public int getPlantId() {
@@ -112,6 +111,7 @@ public class Plant {
 
     /**
      * Set the unique plant identifier
+     *
      * @param plantId int plantId
      */
     public void setPlantId(int plantId) {
@@ -120,6 +120,7 @@ public class Plant {
 
     /**
      * Retrieve the readable name of the plant
+     *
      * @return String plant name
      */
     public String getName() {
@@ -128,6 +129,7 @@ public class Plant {
 
     /**
      * Set the readable name of the plant
+     *
      * @param name String plant name
      */
     public void setName(String name) {
@@ -136,6 +138,7 @@ public class Plant {
 
     /**
      * Get the magnitude of the pot size
+     *
      * @return integer size of pot
      */
     public int getPotSize() {
@@ -144,6 +147,7 @@ public class Plant {
 
     /**
      * Set the magnitude of the pot size
+     *
      * @param potSize int size of pot
      */
     public void setPotSize(int potSize) {
@@ -152,6 +156,7 @@ public class Plant {
 
     /**
      * Retrieve the units used to measure the pot size (see <code>getPotSize()</code>)
+     *
      * @return The units used to measure the pot size
      */
     public String getPotSizeUnits() {
@@ -160,6 +165,7 @@ public class Plant {
 
     /**
      * Set the units used to measure the pot size (see <code>getPotSize()</code>)
+     *
      * @param potSizeUnits
      */
     public void setPotSizeUnits(String potSizeUnits) {
@@ -168,71 +174,129 @@ public class Plant {
 
     /**
      * Returns the yield of the crop
+     *
      * @return double crop yield
      */
     public double getYield() {
         return yield;
     }
 
+    /**
+     * Sets the yeild of the crop
+     *
+     * @param yield crop yield
+     */
     public void setYield(double yield) {
         this.yield = yield;
     }
 
+    /**
+     * Get the units used for yield measurement
+     *
+     * @return yield measurement units
+     */
     public String getYieldUnits() {
         return yieldUnits;
     }
 
+    /**
+     * Sets the units used for yield measurement
+     *
+     * @param yieldUnits yield measurement unit
+     */
     public void setYieldUnits(String yieldUnits) {
         this.yieldUnits = yieldUnits;
     }
 
+    /**
+     * Get the date-time when harvested
+     *
+     * @return date-time when harvested
+     */
     public LocalDateTime getDateHarvested() {
         return dateHarvested;
     }
 
+    /**
+     * Sets the date-time when harvested
+     *
+     * @param dateHarvested date-time when harvested
+     */
     public void setDateHarvested(LocalDateTime dateHarvested) {
         this.dateHarvested = dateHarvested;
     }
 
+    /**
+     * Get the date-time plant was planted
+     *
+     * @return date-time plant was planted
+     */
     public LocalDateTime getDatePlanted() {
         return datePlanted;
     }
 
+    /**
+     * Sets the date-time plant was planted
+     *
+     * @param datePlanted date-time plant was planted
+     */
     public void setDatePlanted(LocalDateTime datePlanted) {
         this.datePlanted = datePlanted;
     }
 
+    /**
+     * Time record was inserted into the database
+     *
+     * @return date-time record
+     */
     public LocalDateTime getInsertTimestamp() {
         return insertTimestamp;
     }
 
+    /**
+     * Sets time record was inserted into the database (ORM usage)
+     *
+     * @param insertTimestamp date-time record
+     */
     public void setInsertTimestamp(LocalDateTime insertTimestamp) {
         this.insertTimestamp = insertTimestamp;
     }
 
+    /**
+     * Get time record was last updated
+     *
+     * @return date-time record
+     */
     public LocalDateTime getUpdateTimestamp() {
         return updateTimestamp;
     }
 
+    /**
+     * Sets time record was last updated (ORM usage)
+     *
+     * @param updateTimestamp date-time record
+     */
     public void setUpdateTimestamp(LocalDateTime updateTimestamp) {
         this.updateTimestamp = updateTimestamp;
     }
 
+    /**
+     * Get associated auth id
+     *
+     * @return ID of associated Auth record
+     */
     public int getAuthId() {
         return authId;
     }
 
+    /**
+     * Sets associated auth id
+     *
+     * @param authId ID of associated Auth record
+     */
     public void setAuthId(int authId) {
         this.authId = authId;
     }
-
-//    public List<Sensor> getSensors() {
-//        return sensors;
-//    }
-
-//    public void setSensors(List<Sensor> sensors) {
-//        this.sensors = sensors;
-//    }
 
     @Override
     public String toString() {

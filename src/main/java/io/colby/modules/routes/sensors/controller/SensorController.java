@@ -106,14 +106,18 @@ public class SensorController {
             HttpServletResponse response
     ) {
 
-        System.out.println("Req:" + request.toString());
 
         Optional<Auth> authRec = authService.getFromToken(auth);
+        System.out.println("Req:" + request.toString());
 
         if (!authRec.isPresent()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return CompletableFuture.completedFuture(null);
         }
+
+        request.setAuthId(authRec.get().getAuthId());
+
+        System.out.println("Req w/ auth:" + request.toString());
 
         Optional<Plant> plantIdPassed = plantRepository.findByPlantId(request.getPlantId());
         Optional<Enclosure> enclosureIdPassed = enclosureRepository.findByEnclosureId(request.getEnclosureId());
